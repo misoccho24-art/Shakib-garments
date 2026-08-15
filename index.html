@@ -101,6 +101,10 @@ d.setAttribute('data-theme',t);}catch(e){}})();
 <main>
 <!-- ============ HERO ============ -->
 <section class="hero">
+  <div class="hero__bg" aria-hidden="true">
+    <img src="assets/img/factory-interior.svg" data-photo="assets/photos/factory-interior.jpg" alt="" width="1600" height="900" />
+  </div>
+
   <div class="shell hero__inner">
     <div class="hero__copy">
       <div class="eyebrow" data-reveal data-intro>
@@ -138,11 +142,20 @@ d.setAttribute('data-theme',t);}catch(e){}})();
       </dl>
     </div>
 
-    <div class="hero__visual hero__media" data-parallax="0.05">
-      <figure class="media media--portrait">
-        <img src="assets/img/hero-garments.svg" alt="Rail of finished knitwear ready for inspection" width="900" height="1100" />
-        <figcaption class="media__cap"><b>Finished goods</b><span>Savar floor</span></figcaption>
-      </figure>
+    <div class="hero__visual hero__cards" data-parallax="0.04">
+      <div class="orbit">
+        <div class="orbit__ring orbit__ring--1"></div>
+        <div class="orbit__ring orbit__ring--2"></div>
+        <div class="orbit__ring orbit__ring--3"></div>
+        <div class="orbit__core">
+          <svg viewBox="0 0 48 48" aria-hidden="true">
+            <path d="M6 8 L24 40 L42 8" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square"/>
+          </svg>
+        </div>
+        <span class="orbit__node orbit__node--1"></span>
+        <span class="orbit__node orbit__node--2"></span>
+        <span class="orbit__node orbit__node--3"></span>
+      </div>
 
       <article class="float-card float-card--a">
         <header>
@@ -273,7 +286,7 @@ d.setAttribute('data-theme',t);}catch(e){}})();
     <div class="gallery">
       <a href="services.html" class="gallery__item" data-reveal>
         <figure class="media media--square">
-          <img src="assets/img/product-tee.svg" alt="Knit t-shirt" loading="lazy" width="800" height="800" />
+          <img src="assets/img/product-tee.svg" data-photo="assets/photos/product-tee.jpg" alt="Knit t-shirt" loading="lazy" width="800" height="800" />
           <figcaption class="media__cap"><b>T-shirts</b><span>Single jersey</span></figcaption>
         </figure>
         <h3>T-shirts</h3>
@@ -282,7 +295,7 @@ d.setAttribute('data-theme',t);}catch(e){}})();
 
       <a href="services.html" class="gallery__item" data-reveal data-delay="70">
         <figure class="media media--square">
-          <img src="assets/img/product-croptop.svg" alt="Crop top" loading="lazy" width="800" height="800" />
+          <img src="assets/img/product-croptop.svg" data-photo="assets/photos/product-croptop.jpg" alt="Crop top" loading="lazy" width="800" height="800" />
           <figcaption class="media__cap"><b>Crop tops</b><span>Slub &amp; rib</span></figcaption>
         </figure>
         <h3>Tops &amp; crop tops</h3>
@@ -291,7 +304,7 @@ d.setAttribute('data-theme',t);}catch(e){}})();
 
       <a href="services.html" class="gallery__item" data-reveal data-delay="140">
         <figure class="media media--square">
-          <img src="assets/img/product-hoodie.svg" alt="Hoodie" loading="lazy" width="800" height="800" />
+          <img src="assets/img/product-hoodie.svg" data-photo="assets/photos/product-hoodie.jpg" alt="Hoodie" loading="lazy" width="800" height="800" />
           <figcaption class="media__cap"><b>Hoodies</b><span>Brushed fleece</span></figcaption>
         </figure>
         <h3>Hoodies</h3>
@@ -300,7 +313,7 @@ d.setAttribute('data-theme',t);}catch(e){}})();
 
       <a href="services.html" class="gallery__item" data-reveal data-delay="210">
         <figure class="media media--square">
-          <img src="assets/img/product-trousers.svg" alt="Knit trousers" loading="lazy" width="800" height="800" />
+          <img src="assets/img/product-trousers.svg" data-photo="assets/photos/product-trousers.jpg" alt="Knit trousers" loading="lazy" width="800" height="800" />
           <figcaption class="media__cap"><b>Trousers</b><span>Joggers</span></figcaption>
         </figure>
         <h3>Trousers</h3>
@@ -342,7 +355,7 @@ d.setAttribute('data-theme',t);}catch(e){}})();
 
     <div class="work">
       <article class="work__item" data-reveal>
-        <figure class="media work__panel"><img src="assets/img/quality-check.svg" alt="Garment on the final inspection table" loading="lazy" width="1000" height="750" /><figcaption class="media__cap"><b>Final audit</b><span>AQL inspection</span></figcaption></figure>
+        <figure class="media work__panel"><img src="assets/img/quality-check.svg" data-photo="assets/photos/quality-check.jpg" alt="Garment on the final inspection table" loading="lazy" width="1000" height="750" /><figcaption class="media__cap"><b>Final audit</b><span>AQL inspection</span></figcaption></figure>
         <div class="work__meta">
           <span class="work__sector">Quality control</span>
           <h3>Inspected at every stage, not just the end</h3>
@@ -355,7 +368,7 @@ d.setAttribute('data-theme',t);}catch(e){}})();
       </article>
 
       <article class="work__item work__item--rev" data-reveal>
-        <figure class="media work__panel"><img src="assets/img/factory-floor.svg" alt="Sewing lines running on the factory floor" loading="lazy" width="1000" height="750" /><figcaption class="media__cap"><b>Sewing floor</b><span>Balanced lines</span></figcaption></figure>
+        <figure class="media work__panel"><img src="assets/img/factory-floor.svg" data-photo="assets/photos/factory-floor.jpg" alt="Sewing lines running on the factory floor" loading="lazy" width="1000" height="750" /><figcaption class="media__cap"><b>Sewing floor</b><span>Balanced lines</span></figcaption></figure>
         <div class="work__meta">
           <span class="work__sector">Delivery</span>
           <h3>Shipment dates we actually hold</h3>
@@ -368,7 +381,7 @@ d.setAttribute('data-theme',t);}catch(e){}})();
       </article>
 
       <article class="work__item" data-reveal>
-        <figure class="media work__panel"><img src="assets/img/packing-export.svg" alt="Cartons packed and marked for export" loading="lazy" width="1000" height="750" /><figcaption class="media__cap"><b>Packed for export</b><span>Carton marked</span></figcaption></figure>
+        <figure class="media work__panel"><img src="assets/img/packing-export.svg" data-photo="assets/photos/packing-export.jpg" alt="Cartons packed and marked for export" loading="lazy" width="1000" height="750" /><figcaption class="media__cap"><b>Packed for export</b><span>Carton marked</span></figcaption></figure>
         <div class="work__meta">
           <span class="work__sector">Responsible production</span>
           <h3>Compliance buyers can audit</h3>
@@ -422,7 +435,7 @@ d.setAttribute('data-theme',t);}catch(e){}})();
 
 <!-- ============ BANNER ============ -->
 <section class="banner">
-  <img src="assets/img/banner-threads.svg" alt="" aria-hidden="true" loading="lazy" width="1600" height="400" />
+  <img src="assets/img/banner-threads.svg" data-photo="assets/photos/banner-threads.jpg" alt="" aria-hidden="true" loading="lazy" width="1600" height="400" />
   <div class="banner__inner" data-reveal>
     <h2 data-split>From yarn to carton, under one roof.</h2>
     <p>Knitting, cutting, sewing, finishing, inspection and packing all happen on our own floor in Savar.</p>

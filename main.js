@@ -289,6 +289,27 @@
     });
   }
 
+  /* ---------------------------------------------------------
+     4a. PHOTO UPGRADE
+     Every illustration is a placeholder. Drop a real photograph
+     into assets/photos/ under the matching name and it is used
+     instead — no markup change. The vector stays as the fallback
+     if the file is not there.
+     --------------------------------------------------------- */
+  $$('img[data-photo]').forEach(function (img) {
+    var probe = new Image();
+    probe.onload = function () {
+      if (!probe.naturalWidth) return;
+      img.src = img.dataset.photo;
+      img.classList.add('is-photo');
+      // the wrapper needs it too: a photograph carries far more detail than
+      // the flat vector, so its scrim is tuned separately
+      if (img.parentElement) img.parentElement.classList.add('is-photo');
+    };
+    probe.onerror = function () { /* no photo supplied yet — keep the vector */ };
+    probe.src = img.dataset.photo;
+  });
+
   /* Lot cards — shared by the Products summary and the admin page. */
   function paintLotCards(host) {
     if (!host || !LOTS) return;
