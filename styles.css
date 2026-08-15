@@ -562,18 +562,18 @@ a:hover > .media img,
 .hero__line.is-active{ opacity:1; transform:none; pointer-events:auto; }
 /* ---------- Hero photograph: no scrim at all ----------
    The client wants the factory image completely clear, so nothing is laid
-   over it and nothing dims it. The hero copy carries its own contrast
-   instead: white type with a tight dark shadow, in both themes. */
+   over it and nothing dims it: no tint, no card behind the text, no
+   shadow, no blur. White type carries the contrast on its own. */
 .hero__bg::after{ content:none; }
 :root[data-theme="light"] .hero__bg img.is-active{ opacity:1; }
 
 /* Fully transparent — no card, no fill, no shadow (a box-shadow's blur
    radius is still a blur), so the photo behind the copy is never
-   softened or covered. Text colour alone carries the contrast. */
+   softened or covered. White text carries the contrast instead. */
 .hero__copy{
   position:relative;
   background:none;
-  color:#0d1320;
+  color:#fff;
   max-width:640px;
 }
 
@@ -581,41 +581,41 @@ a:hover > .media img,
 .hero__copy .hero__title,
 .hero__copy .hero__facts dt,
 .hero__copy .hero__facts dd{
-  color:#0d1320;
+  color:#fff;
   text-shadow:none;
 }
-.hero__copy .hero__line{ text-shadow:none; }   /* colour comes from .hero__lines, not black */
+.hero__copy .hero__line{ text-shadow:none; }   /* colour comes from .hero__lines, not this block */
 
 /* larger throughout — the hero is the client's headline moment */
 .hero__title{ font-size:clamp(38px,5.6vw,72px); letter-spacing:-.04em; }
-.hero__lines{ font-size:clamp(17px,1.7vw,21px); line-height:1.55; font-weight:500; color:#3a4256; }
+.hero__lines{ font-size:clamp(17px,1.7vw,21px); line-height:1.55; font-weight:500; color:rgba(255,255,255,.8); }
 .hero__copy .eyebrow{
   font-size:clamp(13px,1.2vw,15px); font-weight:600;
   padding:9px 18px 9px 14px;
-  background:rgba(13,19,32,.06);
-  border-color:rgba(13,19,32,.2);
+  background:rgba(255,255,255,.1);
+  border-color:rgba(255,255,255,.32);
 }
-.hero__copy .hero__facts dt{ font-size:12px; font-weight:600; color:#6b7385; }
+.hero__copy .hero__facts dt{ font-size:12px; font-weight:600; color:rgba(255,255,255,.65); }
 .hero__copy .hero__facts dd{ font-size:clamp(26px,3.6vw,34px); }
-.hero__copy .hero__facts{ border-top-color:rgba(13,19,32,.14); }
+.hero__copy .hero__facts{ border-top-color:rgba(255,255,255,.28); }
 
 /* transparent too — same rule as the copy above, nothing behind the text */
 .hero .scroll-hint{
   width:fit-content; margin-inline:auto;
-  font-size:11px; font-weight:600; color:#0d1320;
+  font-size:11px; font-weight:600; color:#fff;
 }
-.hero .scroll-hint__line{ background:rgba(13,19,32,.35); }
+.hero .scroll-hint__line{ background:rgba(255,255,255,.4); }
 
 /* buttons still need a fill to read as buttons — only the text container
    went transparent, not the interactive controls */
 .hero__cta .btn{ font-size:15.5px; padding:17px 30px; }
-.hero__cta .btn--solid{ background:#0b0e14; color:#fff; text-shadow:none; }
+.hero__cta .btn--solid{ background:#fff; color:#0d1320; text-shadow:none; }
 .hero__cta .btn--ghost{
-  color:#0d1320; border-color:rgba(13,19,32,.3);
-  background:rgba(13,19,32,.05);
+  color:#fff; border-color:rgba(255,255,255,.45);
+  background:rgba(255,255,255,.08);
   text-shadow:none;
 }
-.hero__cta .btn--ghost:hover{ border-color:#0d1320; background:rgba(13,19,32,.1); }
+.hero__cta .btn--ghost:hover{ border-color:#fff; background:rgba(255,255,255,.16); }
 
 @media (max-width:1080px){
   .hero__bg img{ object-position:62% 50%; }
