@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Vitalis Emergency Hospital — 24/7 Critical Care</title>
+<meta name="description" content="Vitalis Emergency Hospital — ambulance dispatch with live tracking, real-time ETA and an always-on roster of emergency doctors." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23e11d3a'/%3E%3Cpath d='M14 6h4v8h8v4h-8v8h-4v-8H6v-4h8z' fill='%23fff'/%3E%3C/svg%3E" />
+<link rel="stylesheet" href="assets/css/main.css" />
+<link rel="stylesheet" href="assets/css/clock.css" />
+<script>
+  /* Applied before first paint so the theme never flashes. */
+  (function () {
+    try {
+      var saved = localStorage.getItem('vitalis:theme');
+      var mode = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+      document.documentElement.setAttribute('data-theme', mode);
+    } catch (e) {}
+  })();
+</script>
+</head>
+<body>
+
+<!-- ══════════════════════════ PRELOADER ══════════════════════════ -->
+<div id="preloader" class="preloader" role="status" aria-live="polite" aria-label="Loading Vitalis Emergency Hospital">
+  <div class="preloader__panel preloader__panel--top"></div>
+  <div class="preloader__panel preloader__panel--bottom"></div>
+
+  <div class="preloader__core">
+    <div class="preloader__badge">
+      <svg viewBox="0 0 120 120" class="preloader__cross" aria-hidden="true">
+        <defs>
+          <linearGradient id="pl-grad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#ff4d63" />
+            <stop offset="100%" stop-color="#c0102b" />
+          </linearGradient>
+        </defs>
+        <circle class="preloader__ring" cx="60" cy="60" r="52" fill="none" stroke="url(#pl-grad)" stroke-width="3" />
+        <path class="preloader__glyph" d="M52 26h16v26h26v16H68v26H52V68H26V52h26z" fill="url(#pl-grad)" />
+      </svg>
+      <span class="preloader__pulse-dot" aria-hidden="true"></span>
+    </div>
+
+    <svg class="preloader__ecg" viewBox="0 0 600 120" preserveAspectRatio="none" aria-hidden="true">
+      <path class="preloader__ecg-line"
+        d="M0,60 L120,60 L138,60 L146,26 L158,96 L170,44 L180,60 L232,60 L246,60 L254,34 L266,88 L276,60 L340,60 L352,60 L360,18 L372,102 L384,52 L394,60 L470,60 L484,60 L492,38 L502,84 L512,60 L600,60" />
+    </svg>
+
+    <div class="preloader__title">VITALIS<span>+</span></div>
+    <div class="preloader__stage" id="plStage">Booting emergency systems</div>
+
+    <div class="preloader__bar" aria-hidden="true"><i id="plBar"></i></div>
+    <div class="preloader__pct"><span id="plPct">0</span><small>%</small></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════ HEADER ══════════════════════════ -->
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header" id="siteHeader">
+  <div class="er-ticker" id="erTicker" aria-label="Live emergency department status">
+    <div class="er-ticker__track" id="erTickerTrack"></div>
+  </div>
+
+  <div class="shell site-header__bar">
+    <a class="brand" href="#home" aria-label="Vitalis Emergency Hospital home">
+      <span class="brand__mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32"><path d="M13 4h6v9h9v6h-9v9h-6v-9H4v-6h9z" /></svg>
+      </span>
+      <span class="brand__text">
+        <b data-edit="brand.name">Vitalis</b>
+        <small data-edit="brand.tag">Emergency Hospital</small>
+      </span>
+    </a>
+
+    <nav class="nav" id="primaryNav" aria-label="Primary">
+      <a href="#ambulance" class="nav__link">Ambulance</a>
+      <a href="#doctors" class="nav__link">Active Doctors</a>
+      <a href="#departments" class="nav__link">Departments</a>
+      <a href="#trust" class="nav__link">Why Vitalis</a>
+      <a href="#contact" class="nav__link">Contact</a>
+    </nav>
+
+    <div class="site-header__actions">
+      <a class="btn btn--ghost btn--hotline" href="tel:999">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.2.4 2.4.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .8-.2 1l-2.3 2.2z"/></svg>
+        <span data-edit="hotline.number">999</span>
+      </a>
+
+      <button class="icon-btn" id="themeToggle" type="button" aria-label="Switch colour theme" title="Toggle light / dark (press T)">
+        <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>
+      </button>
+
+      <button class="icon-btn" id="staffBtn" type="button" aria-label="Staff editing access" title="Staff editing access">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l8 3.5v6c0 5-3.4 9.3-8 10.5-4.6-1.2-8-5.5-8-10.5v-6z"/><path d="M9.6 12.2l1.8 1.9 3.4-3.8" stroke="var(--bg)" stroke-width="1.8" fill="none"/></svg>
+      </button>
+
+      <a class="btn btn--primary btn--sos" href="#ambulance">
+        <span class="btn__ping" aria-hidden="true"></span>
+        Call Ambulance
+      </a>
+
+      <button class="icon-btn menu-btn" id="menuBtn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="primaryNav">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ══════════════════════════ HERO ══════════════════════════ -->
+  <section class="hero" id="home">
+    <div class="hero__glow" aria-hidden="true"></div>
+    <div class="hero__grid-lines" aria-hidden="true"></div>
+
+    <div class="shell hero__inner">
+      <div class="hero__copy reveal">
+        <p class="pill pill--live"><i></i><span data-edit="hero.pill">Emergency bay open · 24 / 7 / 365</span></p>
+        <h1 data-edit="hero.title">Every second counts.<em>So we count them for you.</em></h1>
+        <p class="lede" data-edit="hero.lede">Request an ambulance in under fifteen seconds, watch it move toward you on a live map, and know exactly when it arrives — down to the second.</p>
+
+        <div class="hero__cta">
+          <a href="#ambulance" class="btn btn--primary btn--lg">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17V9a2 2 0 0 1 2-2h8v10H3zm10-6h3.2l2.8 3.2V17h-6v-6z"/><circle cx="7" cy="18.5" r="1.8"/><circle cx="17" cy="18.5" r="1.8"/></svg>
+            Request an ambulance
+          </a>
+          <a href="#doctors" class="btn btn--outline btn--lg">
+            See active doctors
+            <b class="chip chip--live" id="heroActiveCount">—</b>
+          </a>
+        </div>
+
+        <ul class="hero__facts">
+          <li><b data-edit="hero.fact1.v">6:12</b><span data-edit="hero.fact1.k">median response</span></li>
+          <li><b data-edit="hero.fact2.v">38</b><span data-edit="hero.fact2.k">ambulances in fleet</span></li>
+          <li><b data-edit="hero.fact3.v">100%</b><span data-edit="hero.fact3.k">trauma-certified crews</span></li>
+        </ul>
+      </div>
+
+      <aside class="hero__monitor reveal" aria-label="Live emergency department monitor">
+        <div class="monitor">
+          <div class="monitor__top">
+            <span class="monitor__dot" aria-hidden="true"></span>
+            <span class="monitor__label">ER LIVE MONITOR</span>
+            <span class="monitor__time" id="monitorClock">--:--:--</span>
+          </div>
+
+          <div class="monitor__screen">
+            <svg class="ecg" viewBox="0 0 400 120" preserveAspectRatio="none" aria-hidden="true">
+              <path class="ecg__grid-path" d="M0 30h400M0 60h400M0 90h400M50 0v120M100 0v120M150 0v120M200 0v120M250 0v120M300 0v120M350 0v120" />
+              <path class="ecg__trace" d="M0,60 L60,60 L70,60 L78,30 L88,92 L98,48 L106,60 L160,60 L172,60 L180,24 L190,98 L200,52 L208,60 L260,60 L272,60 L280,30 L290,92 L300,48 L308,60 L360,60 L372,60 L380,26 L390,94 L400,60" />
+            </svg>
+            <div class="monitor__vitals">
+              <div class="vital"><small>HR</small><b id="vitalHr">78</b><i>bpm</i></div>
+              <div class="vital"><small>SpO₂</small><b id="vitalSpo">98</b><i>%</i></div>
+              <div class="vital"><small>BP</small><b id="vitalBp">118/76</b><i>mmHg</i></div>
+            </div>
+          </div>
+
+          <div class="monitor__rows">
+            <div class="mrow"><span>Ambulances available</span><b id="statAmb">—</b></div>
+            <div class="mrow"><span>Doctors on shift</span><b id="statDocs">—</b></div>
+            <div class="mrow"><span>ER wait (triage 3)</span><b id="statWait">—</b></div>
+            <div class="mrow"><span>ICU beds free</span><b id="statBeds">—</b></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee__track" id="marqueeTrack"></div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════ AMBULANCE ══════════════════════════ -->
+  <section class="section section--amb" id="ambulance">
+    <div class="shell">
+      <header class="section__head reveal">
+        <p class="eyebrow"><i class="eyebrow__bar"></i>Emergency dispatch</p>
+        <h2 data-edit="amb.title">Call an ambulance. Then watch it come.</h2>
+        <p class="section__sub" data-edit="amb.sub">Fill the form and a unit is assigned instantly from the nearest station. You get a live map, a crew, and a countdown that never lies.</p>
+      </header>
+
+      <div class="dispatch">
+        <!-- ── form ── -->
+        <form class="card card--form reveal" id="ambForm" novalidate>
+          <div class="card__head">
+            <h3>Emergency request</h3>
+            <span class="badge badge--danger">Priority line</span>
+          </div>
+
+          <div class="field-row">
+            <label class="field">
+              <span class="field__label">Patient name <b>*</b></span>
+              <input type="text" name="name" id="fName" autocomplete="name" placeholder="e.g. Rafi Ahmed" required />
+              <em class="field__err" data-err="name"></em>
+            </label>
+            <label class="field">
+              <span class="field__label">Phone <b>*</b></span>
+              <input type="tel" name="phone" id="fPhone" autocomplete="tel" inputmode="tel" placeholder="+880 1XXX-XXXXXX" required />
+              <em class="field__err" data-err="phone"></em>
+            </label>
+          </div>
+
+          <label class="field">
+            <span class="field__label">Pickup address <b>*</b></span>
+            <div class="field__with-btn">
+              <input type="text" name="address" id="fAddress" placeholder="House / road / area" required />
+              <button type="button" class="btn btn--soft btn--sm" id="geoBtn" title="Detect my location">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1.6"/></svg>
+                Locate me
+              </button>
+            </div>
+            <em class="field__err" data-err="address"></em>
+          </label>
+
+          <div class="field-row">
+            <label class="field">
+              <span class="field__label">Zone</span>
+              <select name="zone" id="fZone">
+                <option value="north">North district</option>
+                <option value="east">East district</option>
+                <option value="south" selected>South district</option>
+                <option value="west">West district</option>
+                <option value="central">City centre</option>
+              </select>
+            </label>
+            <label class="field">
+              <span class="field__label">Emergency type <b>*</b></span>
+              <select name="type" id="fType" required>
+                <option value="">Select…</option>
+                <option>Cardiac arrest / chest pain</option>
+                <option>Road traffic accident</option>
+                <option>Stroke symptoms</option>
+                <option>Severe breathing difficulty</option>
+                <option>Major bleeding / trauma</option>
+                <option>Burns</option>
+                <option>Pregnancy / labour</option>
+                <option>Poisoning / overdose</option>
+                <option>Unconscious patient</option>
+                <option>Other</option>
+              </select>
+              <em class="field__err" data-err="type"></em>
+            </label>
+          </div>
+
+          <fieldset class="field field--severity">
+            <legend class="field__label">Severity</legend>
+            <div class="severity" role="radiogroup" aria-label="Severity">
+              <label class="sev sev--1"><input type="radio" name="severity" value="critical" /><span><b>Critical</b><small>life-threatening</small></span></label>
+              <label class="sev sev--2"><input type="radio" name="severity" value="urgent" checked /><span><b>Urgent</b><small>needs care fast</small></span></label>
+              <label class="sev sev--3"><input type="radio" name="severity" value="stable" /><span><b>Stable</b><small>transport needed</small></span></label>
+            </div>
+          </fieldset>
+
+          <div class="field-row">
+            <label class="field">
+              <span class="field__label">Patients on scene</span>
+              <input type="number" name="patients" id="fPatients" min="1" max="20" value="1" />
+            </label>
+            <label class="field">
+              <span class="field__label">Support needed</span>
+              <select name="support" id="fSupport">
+                <option value="basic">Basic life support</option>
+                <option value="advanced" selected>Advanced life support</option>
+                <option value="neonatal">Neonatal / paediatric</option>
+                <option value="cardiac">Cardiac (defib + ECG)</option>
+              </select>
+            </label>
+          </div>
+
+          <label class="field">
+            <span class="field__label">Notes for the crew</span>
+            <textarea name="notes" id="fNotes" rows="3" placeholder="Landmarks, floor number, gate code, allergies…"></textarea>
+          </label>
+
+          <label class="check">
+            <input type="checkbox" id="fConsent" required />
+            <span>I confirm this is a genuine emergency and consent to be contacted.</span>
+          </label>
+          <em class="field__err" data-err="consent"></em>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn--primary btn--block btn--lg" id="dispatchBtn">
+              <span class="btn__ping" aria-hidden="true"></span>
+              Dispatch ambulance now
+            </button>
+            <p class="form-note">Demo build — no real emergency service is contacted. In a real emergency call <b data-edit="hotline.number2">999</b>.</p>
+          </div>
+        </form>
+
+        <!-- ── tracking ── -->
+        <div class="card card--track reveal" id="trackCard" aria-live="polite">
+          <div class="card__head">
+            <h3>Live unit tracking</h3>
+            <span class="badge" id="trackBadge">Idle</span>
+          </div>
+
+          <!-- idle -->
+          <div class="track-idle" id="trackIdle">
+            <div class="track-idle__art" aria-hidden="true">
+              <svg viewBox="0 0 200 120">
+                <path class="road" d="M10 92h180" />
+                <g class="amb-idle">
+                  <rect x="52" y="52" width="62" height="30" rx="6" />
+                  <path d="M114 62h14l12 12v8h-26z" />
+                  <circle class="wheel" cx="70" cy="86" r="7" />
+                  <circle class="wheel" cx="126" cy="86" r="7" />
+                  <path class="cross" d="M76 60h8v-8h8v8h8v8h-8v8h-8v-8h-8z" />
+                  <rect class="beacon" x="72" y="44" width="10" height="7" rx="2" />
+                  <rect class="beacon beacon--b" x="86" y="44" width="10" height="7" rx="2" />
+                </g>
+              </svg>
+            </div>
+            <p><b>No active dispatch.</b></p>
+            <p class="muted">Submit the form and this panel turns into a live map with a second-by-second countdown.</p>
+            <button type="button" class="btn btn--soft btn--sm" id="demoBtn">Run a demo dispatch</button>
+          </div>
+
+          <!-- active -->
+          <div class="track-live" id="trackLive" hidden>
+            <div class="map-wrap">
+              <svg class="map" id="map" viewBox="0 0 800 500" role="img" aria-label="Live ambulance route map">
+                <defs>
+                  <pattern id="mapGrid" width="40" height="40" patternUnits="userSpaceOnUse">
+                    <path d="M40 0H0v40" fill="none" stroke="var(--map-grid)" stroke-width="1" />
+                  </pattern>
+                  <filter id="routeGlow" x="-40%" y="-40%" width="180%" height="180%">
+                    <feGaussianBlur stdDeviation="6" result="b" />
+                    <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+                  </filter>
+                </defs>
+
+                <rect class="map__bg" x="0" y="0" width="800" height="500" />
+                <rect x="0" y="0" width="800" height="500" fill="url(#mapGrid)" />
+                <g id="mapBlocks"></g>
+                <path class="map__river" id="mapRiver" d="M-20 400 C 140 360, 220 470, 380 430 S 640 360, 820 410" />
+                <g id="mapRoads"></g>
+                <path class="map__route-shadow" id="routeShadow" d="" />
+                <path class="map__route" id="route" d="" filter="url(#routeGlow)" />
+                <path class="map__route-done" id="routeDone" d="" />
+
+                <g id="hospitalMarker" class="marker marker--hospital">
+                  <circle class="marker__halo" r="20" />
+                  <rect x="-13" y="-13" width="26" height="26" rx="7" />
+                  <path class="marker__cross" d="M-3-8h6v5h5v6h-5v5h-6v-5h-5v-6h5z" />
+                  <text class="marker__label" y="-24">VITALIS BASE</text>
+                </g>
+
+                <g id="patientMarker" class="marker marker--patient">
+                  <circle class="marker__pulse" r="10" />
+                  <circle class="marker__pin" r="7" />
+                  <text class="marker__label" y="-20">YOU</text>
+                </g>
+
+                <g id="ambUnit" class="amb-unit">
+                  <g class="amb-unit__body">
+                    <ellipse class="amb-unit__shadow" cx="0" cy="9" rx="17" ry="5" />
+                    <rect x="-16" y="-9" width="24" height="17" rx="4" />
+                    <path d="M8-4h6l6 6v6H8z" />
+                    <circle class="amb-unit__wheel" cx="-9" cy="9" r="3.4" />
+                    <circle class="amb-unit__wheel" cx="13" cy="9" r="3.4" />
+                    <path class="amb-unit__cross" d="M-6-5h3.5v-3.5h3.5V-5H4.5v3.5H1V2h-3.5v-3.5H-6z" />
+                    <circle class="amb-unit__light amb-unit__light--r" cx="-4" cy="-12" r="3" />
+                    <circle class="amb-unit__light amb-unit__light--b" cx="4" cy="-12" r="3" />
+                  </g>
+                </g>
+              </svg>
+
+              <div class="map__legend">
+                <span><i class="dot dot--red"></i>Ambulance</span>
+                <span><i class="dot dot--blue"></i>You</span>
+                <span><i class="dot dot--grey"></i>Route</span>
+              </div>
+
+              <div class="map__speed" role="group" aria-label="Simulation speed">
+                <button type="button" data-speed="1">1×</button>
+                <button type="button" data-speed="4">4×</button>
+                <button type="button" data-speed="8" class="is-on">8×</button>
+              </div>
+            </div>
+
+            <!-- countdown clock -->
+            <div class="eta-block">
+              <div class="eta-block__label">
+                <span>Estimated time of arrival</span>
+                <b id="etaState">EN ROUTE</b>
+              </div>
+
+              <div class="clock" id="clock" role="timer" aria-live="off" aria-label="Time until ambulance arrives">
+                <div class="clock__digits" id="clockDigits"></div>
+                <span class="clock__unit">MIN&nbsp;&nbsp;SEC</span>
+              </div>
+              <p class="sr-only" id="etaSpoken" aria-live="polite"></p>
+
+              <div class="eta-block__meta">
+                <div><small>Distance left</small><b id="etaDist">—</b></div>
+                <div><small>Avg speed</small><b id="etaSpeed">—</b></div>
+                <div><small>Case ID</small><b id="etaCase">—</b></div>
+              </div>
+
+              <div class="progress"><i id="etaProgress"></i></div>
+            </div>
+
+            <!-- crew -->
+            <div class="crew" id="crewBox"></div>
+
+            <!-- timeline -->
+            <ol class="timeline" id="timeline"></ol>
+
+            <div class="track-live__actions">
+              <button type="button" class="btn btn--soft btn--sm" id="callCrewBtn">Call the crew</button>
+              <button type="button" class="btn btn--soft btn--sm" id="shareBtn">Share live link</button>
+              <button type="button" class="btn btn--danger-ghost btn--sm" id="cancelBtn">Cancel dispatch</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════ DOCTORS ══════════════════════════ -->
+  <section class="section section--docs" id="doctors">
+    <div class="shell">
+      <header class="section__head section__head--split reveal">
+        <div>
+          <p class="eyebrow"><i class="eyebrow__bar"></i>On duty right now</p>
+          <h2 data-edit="doc.title">Active doctors, ready for instant emergencies</h2>
+          <p class="section__sub" data-edit="doc.sub">This board refreshes itself. Green means they can be at a bedside within minutes — tap <b>Page now</b> and the clock starts.</p>
+        </div>
+        <div class="live-tag"><i></i>LIVE ROSTER<small id="rosterStamp">updated just now</small></div>
+      </header>
+
+      <div class="docs-toolbar reveal">
+        <div class="search">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21"/></svg>
+          <input type="search" id="docSearch" placeholder="Search name, specialty or department…" aria-label="Search doctors" />
+        </div>
+        <div class="chips" id="docFilters" role="group" aria-label="Filter doctors">
+          <button class="chip is-on" data-filter="all" type="button">All</button>
+          <button class="chip" data-filter="available" type="button"><i class="dot dot--green"></i>Available</button>
+          <button class="chip" data-filter="oncall" type="button"><i class="dot dot--amber"></i>On call</button>
+          <button class="chip" data-filter="surgery" type="button"><i class="dot dot--red"></i>In surgery</button>
+          <button class="chip" data-filter="Emergency" type="button">Emergency</button>
+          <button class="chip" data-filter="Cardiology" type="button">Cardiology</button>
+          <button class="chip" data-filter="Trauma" type="button">Trauma</button>
+          <button class="chip" data-filter="Paediatrics" type="button">Paediatrics</button>
+        </div>
+        <button class="btn btn--soft btn--sm is-hidden" id="addDocBtn" type="button">+ Add doctor</button>
+      </div>
+
+      <div class="docs-grid" id="docsGrid"></div>
+      <p class="empty" id="docsEmpty" hidden>No doctors match that search.</p>
+
+      <div class="pager" id="pageQueueWrap" hidden>
+        <h3>Paging queue</h3>
+        <ul id="pageQueue"></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════ DEPARTMENTS ══════════════════════════ -->
+  <section class="section section--dept" id="departments">
+    <div class="shell">
+      <header class="section__head reveal">
+        <p class="eyebrow"><i class="eyebrow__bar"></i>Centres of care</p>
+        <h2 data-edit="dept.title">Twelve floors. One promise.</h2>
+        <p class="section__sub" data-edit="dept.sub">Specialist teams share one record, one lift shaft and one radio channel — so a handover takes seconds, not forms.</p>
+      </header>
+      <div class="dept-grid" id="deptGrid"></div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════ TRUST / STATS ══════════════════════════ -->
+  <section class="section section--trust" id="trust">
+    <div class="shell">
+      <header class="section__head reveal">
+        <p class="eyebrow"><i class="eyebrow__bar"></i>Why Vitalis</p>
+        <h2 data-edit="trust.title">Built around the golden hour</h2>
+      </header>
+
+      <div class="stats" id="statsRow">
+        <div class="stat reveal"><b class="count" data-count="4" data-suffix=":58">0</b><span data-edit="trust.s1">average city response</span></div>
+        <div class="stat reveal"><b class="count" data-count="112000" data-suffix="+">0</b><span data-edit="trust.s2">emergencies handled</span></div>
+        <div class="stat reveal"><b class="count" data-count="98" data-suffix="%">0</b><span data-edit="trust.s3">survival-to-discharge</span></div>
+        <div class="stat reveal"><b class="count" data-count="24" data-suffix="/7">0</b><span data-edit="trust.s4">trauma theatre staffed</span></div>
+      </div>
+
+      <div class="trust-grid">
+        <article class="tcard reveal">
+          <span class="tcard__ico">⚡</span>
+          <h3 data-edit="trust.c1.t">Dispatch in 15 seconds</h3>
+          <p data-edit="trust.c1.b">The moment your form lands, the nearest free unit is locked to your case and the crew's tablet lights up.</p>
+        </article>
+        <article class="tcard reveal">
+          <span class="tcard__ico">🛰️</span>
+          <h3 data-edit="trust.c2.t">You see what we see</h3>
+          <p data-edit="trust.c2.b">The same GPS trace our control room watches is on your screen — no guessing, no "it's on the way".</p>
+        </article>
+        <article class="tcard reveal">
+          <span class="tcard__ico">🩺</span>
+          <h3 data-edit="trust.c3.t">A doctor before the doors open</h3>
+          <p data-edit="trust.c3.b">Your case is pushed to the on-shift consultant while the ambulance is still moving, so the team is briefed on arrival.</p>
+        </article>
+        <article class="tcard reveal">
+          <span class="tcard__ico">🧬</span>
+          <h3 data-edit="trust.c4.t">One record, everywhere</h3>
+          <p data-edit="trust.c4.b">Vitals streamed from the ambulance land in the same chart the surgeon opens upstairs.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════ CONTACT ══════════════════════════ -->
+  <section class="section section--contact" id="contact">
+    <div class="shell contact">
+      <div class="contact__copy reveal">
+        <p class="eyebrow"><i class="eyebrow__bar"></i>Find us</p>
+        <h2 data-edit="contact.title">The doors never close</h2>
+        <p class="section__sub" data-edit="contact.sub">Emergency entrance is on the north side, under the red canopy. Ambulance bay is signposted from the main road.</p>
+        <ul class="contact__list">
+          <li><span>Emergency</span><b data-edit="contact.emergency">999 · +880 2 9110 999</b></li>
+          <li><span>Reception</span><b data-edit="contact.reception">+880 2 9110 100</b></li>
+          <li><span>Address</span><b data-edit="contact.address">17 Kazi Nazrul Islam Ave, Dhaka 1000</b></li>
+          <li><span>Email</span><b data-edit="contact.email">control@vitalis.health</b></li>
+        </ul>
+      </div>
+      <div class="contact__card reveal">
+        <div class="clock clock--mini" id="clockMini" aria-hidden="true"><div class="clock__digits" id="clockMiniDigits"></div></div>
+        <p class="contact__cardnote" data-edit="contact.note">Time since the last life saved in this building.</p>
+        <a class="btn btn--primary btn--block" href="#ambulance">Request an ambulance</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="shell site-footer__inner">
+    <div>
+      <a class="brand brand--sm" href="#home">
+        <span class="brand__mark" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M13 4h6v9h9v6h-9v9h-6v-9H4v-6h9z"/></svg></span>
+        <span class="brand__text"><b>Vitalis</b><small>Emergency Hospital</small></span>
+      </a>
+      <p class="site-footer__note" data-edit="footer.note">A front-end demonstration. Data lives in your browser only — nothing is sent anywhere.</p>
+    </div>
+    <nav aria-label="Footer">
+      <a href="#ambulance">Ambulance</a>
+      <a href="#doctors">Doctors</a>
+      <a href="#departments">Departments</a>
+      <a href="#contact">Contact</a>
+      <button type="button" id="footerStaffBtn" class="linklike">Staff access</button>
+    </nav>
+    <p class="site-footer__copy">© <span id="yr"></span> Vitalis Emergency Hospital.</p>
+  </div>
+</footer>
+
+<button class="to-top" id="toTop" type="button" aria-label="Back to top">↑</button>
+
+<!-- ══════════════════════════ EDIT TOOLBAR ══════════════════════════ -->
+<div class="editbar" id="editBar" hidden>
+  <div class="editbar__left">
+    <span class="editbar__dot" aria-hidden="true"></span>
+    <b>Edit mode</b>
+    <small id="editHint">Click any highlighted text to rewrite it</small>
+  </div>
+  <div class="editbar__right">
+    <button type="button" class="btn btn--sm btn--soft" id="editRequests">Requests <b id="reqCount">0</b></button>
+    <button type="button" class="btn btn--sm btn--soft" id="editExport">Export</button>
+    <button type="button" class="btn btn--sm btn--soft" id="editImport">Import</button>
+    <button type="button" class="btn btn--sm btn--danger-ghost" id="editReset">Reset all</button>
+    <button type="button" class="btn btn--sm btn--primary" id="editSave">Save &amp; exit</button>
+  </div>
+  <input type="file" id="importFile" accept="application/json" hidden />
+</div>
+
+<!-- ══════════════════════════ MODALS ══════════════════════════ -->
+<div class="modal" id="pinModal" hidden>
+  <div class="modal__backdrop" data-close></div>
+  <div class="modal__box" role="dialog" aria-modal="true" aria-labelledby="pinTitle">
+    <button class="modal__x" type="button" data-close aria-label="Close">×</button>
+    <h3 id="pinTitle">Staff editing access</h3>
+    <p class="muted">Enter the 4-digit staff PIN to edit this site's content. Everything is stored locally in this browser.</p>
+    <div class="pin" id="pinDots"><i></i><i></i><i></i><i></i></div>
+    <input class="pin__input" id="pinInput" type="password" inputmode="numeric" maxlength="4" autocomplete="off" aria-label="Staff PIN" />
+    <div class="keypad" id="keypad"></div>
+    <p class="pin__err" id="pinErr" hidden>Wrong PIN — try again.</p>
+    <p class="pin__hint">Demo PIN: <b>2580</b> · change it once you're inside.</p>
+  </div>
+</div>
+
+<div class="modal" id="docModal" hidden>
+  <div class="modal__backdrop" data-close></div>
+  <div class="modal__box modal__box--wide" role="dialog" aria-modal="true" aria-labelledby="docModalTitle">
+    <button class="modal__x" type="button" data-close aria-label="Close">×</button>
+    <h3 id="docModalTitle">Doctor</h3>
+    <div id="docModalBody"></div>
+  </div>
+</div>
+
+<div class="modal" id="reqModal" hidden>
+  <div class="modal__backdrop" data-close></div>
+  <div class="modal__box modal__box--wide" role="dialog" aria-modal="true" aria-labelledby="reqTitle">
+    <button class="modal__x" type="button" data-close aria-label="Close">×</button>
+    <h3 id="reqTitle">Ambulance request log</h3>
+    <div class="reqlog" id="reqLog"></div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts" aria-live="polite" aria-atomic="false"></div>
+
+<script src="assets/js/store.js"></script>
+<script src="assets/js/loader.js"></script>
+<script src="assets/js/theme.js"></script>
+<script src="assets/js/clock.js"></script>
+<script src="assets/js/doctors.js"></script>
+<script src="assets/js/ambulance.js"></script>
+<script src="assets/js/edit.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>

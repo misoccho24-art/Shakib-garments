@@ -1,0 +1,337 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" id="metaTheme" content="#07090d" />
+<title>About Us — Sakib Apparels Limited</title>
+<meta name="description" content="Connecting quality, reliability and global fashion. A trusted garment exporting company in Bangladesh." />
+<script>
+/* Runs before first paint so the saved theme applies with no flash. */
+(function(){var d=document.documentElement;
+try{var t=localStorage.getItem('sakib-theme');
+if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
+d.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="styles.css" />
+<noscript><style>.preloader{display:none}[data-reveal],.word{opacity:1!important;transform:none!important}</style></noscript>
+</head>
+<body>
+
+<div class="preloader" id="preloader">
+  <div class="preloader__inner">
+    <svg class="preloader__mark" viewBox="0 0 48 48" aria-hidden="true">
+      <path class="pl-path" d="M6 8 L24 40 L42 8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square"/>
+      <path class="pl-path pl-path--2" d="M16 8 L24 22 L32 8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square"/>
+    </svg>
+    <div class="preloader__bar"><span id="plBar"></span></div>
+    <div class="preloader__count"><span id="plCount">0</span><i>%</i></div>
+  </div>
+</div>
+
+<div class="scrollbar" id="scrollbar"><span></span></div>
+
+<div class="backdrop" aria-hidden="true">
+  <div class="backdrop__grid"></div>
+  <div class="backdrop__glow backdrop__glow--a"></div>
+  <div class="backdrop__glow backdrop__glow--b"></div>
+  <div class="backdrop__glow backdrop__glow--c"></div>
+</div>
+
+<header class="header" id="header">
+  <div class="shell header__inner">
+    <a href="index.html" class="brand">
+      <svg class="brand__mark" viewBox="0 0 48 48" aria-hidden="true">
+        <path d="M6 8 L24 40 L42 8" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="square"/>
+        <path d="M17 8 L24 20 L31 8" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="square" opacity=".45"/>
+      </svg>
+      <span class="brand__word">SAKIB APPARELS</span>
+    </a>
+
+    <nav class="nav">
+      <a href="index.html" class="nav__link"><span>Home</span><span>Home</span></a>
+      <a href="about.html" class="nav__link is-current"><span>About Us</span><span>About Us</span></a>
+      <a href="services.html" class="nav__link"><span>Services</span><span>Services</span></a>
+      <a href="contact.html" class="nav__link"><span>Contact Us</span><span>Contact Us</span></a>
+    </nav>
+
+    <div class="header__actions">
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch colour theme">
+        <span class="theme-toggle__track">
+          <span class="theme-toggle__thumb">
+            <svg class="ic ic--sun" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="4.2" fill="currentColor"/>
+              <g stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/>
+              </g>
+            </svg>
+            <svg class="ic ic--moon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 14.2A8.4 8.4 0 0 1 9.8 4 8.6 8.6 0 1 0 20 14.2Z" fill="currentColor"/>
+            </svg>
+          </span>
+        </span>
+      </button>
+
+      <a href="contact.html" class="btn btn--solid btn--sm magnetic">
+        <span class="btn__label">Contact us</span>
+        <span class="btn__shine"></span>
+      </a>
+
+      <button class="burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="drawer" id="drawer">
+  <nav class="drawer__nav">
+    <a href="index.html" data-drawer-link>Home</a>
+    <a href="about.html" class="is-current" data-drawer-link>About Us</a>
+    <a href="services.html" data-drawer-link>Services</a>
+    <a href="contact.html" data-drawer-link>Contact Us</a>
+    <a href="admin.html" data-drawer-link>Admins</a>
+  </nav>
+  <div class="drawer__meta">
+    <span>info@sakibapparels.example</span>
+    <span>+880 2 5566 0148</span>
+  </div>
+</div>
+
+<main>
+<!-- ============ SUBHERO ============ -->
+<section class="subhero">
+  <div class="shell subhero__inner">
+    <div class="crumbs" data-reveal data-intro>
+      <a href="index.html">Home</a><i>/</i><span>About Us</span>
+    </div>
+    <h1 data-split data-intro>Connecting Quality, Reliability, and Global Fashion</h1>
+    <p data-reveal data-intro>
+      We are a trusted garment exporting company committed to delivering high-quality
+      apparel to international markets.
+    </p>
+
+    <div class="subhero__stats" data-reveal data-intro>
+      <div><b><span class="count" data-count="1200" data-suffix="+">0</span></b><span>People employed</span></div>
+      <div><b><span class="count" data-count="420" data-suffix="k">0</span></b><span>Pieces per month</span></div>
+      <div><b><span class="count" data-count="17">0</span></b><span>Export markets</span></div>
+      <div><b><span class="count" data-count="5">0</span></b><span>Product lines</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STORY ============ -->
+<section class="section">
+  <div class="shell">
+    <div class="section__head">
+      <span class="kicker" data-reveal>01 — About us</span>
+      <h2 class="section__title" data-split>Who we are.</h2>
+    </div>
+
+    <div class="split">
+      <div class="prose" data-reveal>
+        <p>
+          <strong>Sakib Apparels Limited</strong> is one of the best knitwear item manufacturers
+          in Bangladesh, working to make satisfied customers of global markets. We manufacture
+          t-shirts, tops, crop tops, hoodies, trousers and more, with the best quality control to
+          ensure the highest comfort. We are also concerned about your fashion, luxury and values.
+        </p>
+        <p>
+          We are a trusted garment exporting company committed to delivering high-quality apparel
+          to international markets. With a strong focus on quality, responsible production and
+          customer satisfaction, we work closely with buyers and fashion brands to turn their
+          ideas into products that meet global standards.
+        </p>
+      </div>
+
+      <div class="prose" data-reveal data-delay="100">
+        <p>
+          From sourcing quality fabrics and materials to manufacturing, quality inspection,
+          packaging and shipment, we maintain careful attention to detail throughout every stage
+          of the production process.
+        </p>
+        <p>
+          Our experienced team understands the importance of timely delivery, consistent quality,
+          competitive pricing and clear communication in building long-term business relationships.
+        </p>
+        <p>
+          We believe that successful business is built on trust, quality, transparency and
+          commitment. Our goal is not simply to export garments, but to become a reliable
+          long-term sourcing partner for our customers around the world.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ VALUES ============ -->
+<section class="section section--tint">
+  <div class="shell">
+    <div class="section__head">
+      <span class="kicker" data-reveal>02 — What we stand on</span>
+      <h2 class="section__title" data-split>Four things we will not trade away.</h2>
+    </div>
+
+    <div class="values">
+      <article class="value" data-reveal>
+        <span class="value__idx">01</span>
+        <h3>Trust</h3>
+        <p>What we promise at quotation is what arrives at your warehouse. No surprises in the carton.</p>
+      </article>
+      <article class="value" data-reveal data-delay="70">
+        <span class="value__idx">02</span>
+        <h3>Quality</h3>
+        <p>Checked at fabric, cutting, in-line and final audit, so a fault never travels the whole run.</p>
+      </article>
+      <article class="value" data-reveal data-delay="140">
+        <span class="value__idx">03</span>
+        <h3>Transparency</h3>
+        <p>Order status, inspection results and shipping documents shared as they happen, not on request.</p>
+      </article>
+      <article class="value" data-reveal data-delay="210">
+        <span class="value__idx">04</span>
+        <h3>Commitment</h3>
+        <p>We plan for the next season with you, not just the order currently on the floor.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MILESTONES ============ -->
+<section class="section">
+  <div class="shell">
+    <div class="section__head">
+      <span class="kicker" data-reveal>03 — Our path</span>
+      <h2 class="section__title" data-split>How the factory grew.</h2>
+    </div>
+
+    <div class="milestones">
+      <div class="milestone" data-reveal>
+        <span class="milestone__year">2009</span>
+        <div><h3>First sewing floor</h3><p>Sakib Apparels opens in Savar with four lines and a single knit t-shirt programme.</p></div>
+      </div>
+      <div class="milestone" data-reveal data-delay="60">
+        <span class="milestone__year">2013</span>
+        <div><h3>First European buyer</h3><p>A repeat order from a French brand takes the factory into regular export production.</p></div>
+      </div>
+      <div class="milestone" data-reveal data-delay="120">
+        <span class="milestone__year">2017</span>
+        <div><h3>Fleece and bottoms added</h3><p>Hoodies and knit trousers join the range, doubling monthly capacity.</p></div>
+      </div>
+      <div class="milestone" data-reveal data-delay="180">
+        <span class="milestone__year">2021</span>
+        <div><h3>In-house sampling room</h3><p>Pattern and sampling brought in-house, cutting development time to under two weeks.</p></div>
+      </div>
+      <div class="milestone" data-reveal data-delay="240">
+        <span class="milestone__year">2026</span>
+        <div><h3>Digital order sheets</h3><p>Every production lot tracked from cutting to finishing, with photographs against each order.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TEAM ============ -->
+<section class="section section--tint">
+  <div class="shell">
+    <div class="section__head">
+      <span class="kicker" data-reveal>04 — People</span>
+      <h2 class="section__title" data-split>Who you will deal with.</h2>
+    </div>
+
+    <div class="team">
+      <article class="member" data-reveal>
+        <div class="member__photo member__photo--1">SR</div>
+        <h3>Sakib Rahman</h3>
+        <span>Managing Director</span>
+        <p>Founded the factory in 2009 and still signs off every new buyer programme.</p>
+      </article>
+      <article class="member" data-reveal data-delay="70">
+        <div class="member__photo member__photo--2">NA</div>
+        <h3>Nadia Akter</h3>
+        <span>Head of Merchandising</span>
+        <p>Runs costing, sampling and the buyer relationship from enquiry to shipment.</p>
+      </article>
+      <article class="member" data-reveal data-delay="140">
+        <div class="member__photo member__photo--3">MH</div>
+        <h3>Mahmud Hasan</h3>
+        <span>Production Manager</span>
+        <p>Owns the sewing floor plan, line balancing and daily output against the order book.</p>
+      </article>
+      <article class="member" data-reveal data-delay="210">
+        <div class="member__photo member__photo--4">TI</div>
+        <h3>Tanvir Islam</h3>
+        <span>Quality Assurance Lead</span>
+        <p>Sets the inspection standard and signs the final audit before anything is packed.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="cta">
+  <div class="shell cta__inner">
+    <span class="kicker" data-reveal>Next step</span>
+    <h2 class="cta__title" data-split>Become a long-term sourcing partner.</h2>
+    <p class="cta__lede" data-reveal data-delay="100">
+      Send us a style and a quantity. We will come back with a price, a lead time and a
+      sampling plan.
+    </p>
+    <div class="cta__buttons" data-reveal data-delay="180">
+      <a href="contact.html" class="btn btn--solid magnetic">
+        <span class="btn__label">Contact us</span>
+        <span class="btn__shine"></span>
+      </a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="shell footer__inner">
+    <div class="footer__brand">
+      <a href="index.html" class="brand">
+        <svg class="brand__mark" viewBox="0 0 48 48" aria-hidden="true">
+        <path d="M6 8 L24 40 L42 8" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="square"/>
+        <path d="M17 8 L24 20 L31 8" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="square" opacity=".45"/>
+      </svg>
+        <span class="brand__word">SAKIB APPARELS</span>
+      </a>
+      <p>Knitwear manufacturing and garment export from Bangladesh to global markets.</p>
+    </div>
+
+    <nav class="footer__col">
+      <h4>Pages</h4>
+      <a href="index.html">Home</a>
+      <a href="about.html">About Us</a>
+      <a href="services.html">Services</a>
+      <a href="contact.html">Contact Us</a>
+      <a href="admin.html">Admins</a>
+    </nav>
+
+    <nav class="footer__col">
+      <h4>What we make</h4>
+      <a href="services.html">T-shirts</a>
+      <a href="services.html">Tops &amp; crop tops</a>
+      <a href="services.html">Hoodies</a>
+      <a href="services.html">Trousers</a>
+    </nav>
+
+    <div class="footer__col">
+      <h4>Factory &amp; office</h4>
+      <p>Sakib Apparels Limited<br />Plot 21, DEPZ Extension Area<br />Savar, Dhaka 1349, Bangladesh</p>
+    </div>
+  </div>
+
+  <div class="shell footer__base">
+    <span>© 2026 Sakib Apparels Limited. Prototype — content is illustrative.</span>
+    <div class="footer__legal">
+      <a href="#">Privacy</a><a href="#">Terms</a><a href="#">Compliance</a>
+    </div>
+  </div>
+</footer>
+
+<script src="lots-data.js"></script>
+<script src="lots.js"></script>
+<script src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 260" width="900" height="260">
+  <title>DEVELOPED BY | M I - front chest print</title>
+  <g font-family='"Courier New", ui-monospace, monospace' font-weight="700" text-anchor="middle">
+  <text x="450" y="36" font-size="26" letter-spacing="11" fill="#35F0C0">01001101 01001001</text>
+  <rect x="0" y="58" width="900" height="2" fill="#FFFFFF" fill-opacity=".30"/>
+  <text x="450" y="150" font-family='"Arial Black", "Arial Bold", Arial, sans-serif' font-size="78" font-weight="900" letter-spacing="1" textLength="900" lengthAdjust="spacingAndGlyphs" fill="#FFFFFF">DEVELOPED BY <tspan fill="#35F0C0">| M I</tspan></text>
+  <rect x="0" y="178" width="900" height="2" fill="#FFFFFF" fill-opacity=".30"/>
+  <text x="450" y="216" font-size="22" letter-spacing="9" fill="#FFFFFF" fill-opacity=".55">// BINARY READS : M I</text>
+  </g>
+</svg>

@@ -1,0 +1,1960 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Vitalis Emergency Hospital — 24/7 Critical Care & Ambulance Dispatch</title>
+<meta name="description" content="Vitalis Emergency Hospital — one-tap ambulance dispatch with live vehicle tracking, a digital arrival countdown, and a live roster of on-duty emergency doctors." />
+<meta name="theme-color" content="#2fbf87" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232fbf87'/%3E%3Cpath d='M13.5 5h5v8.5H27v5h-8.5V27h-5v-8.5H5v-5h8.5z' fill='white'/%3E%3C/svg%3E" />
+
+<style>
+/* ============================================================
+   VITALIS — single-file hospital site
+   No frameworks. No Firebase. No build step. No network calls.
+   ============================================================ */
+
+/* ---------- 1. Design tokens ---------- */
+:root{
+  --brand:#2fbf87;        /* mint — the hospital's identity colour */
+  --brand-light:#4fe3a0;
+  --brand-deep:#147a58;
+  --danger:#e2334c;       /* reserved for genuine clinical alarm states only */
+  --amber:#ffb020;
+  --green:#18c07a;
+  --blue:#3b82f6;
+  --violet:#8b5cf6;
+
+  --seg-on:#3ee08a;
+  --seg-off:#2f3a34;
+  --clock-face:#232b27;
+  --clock-frame:#2fbf87;
+
+  --r-sm:10px; --r-md:16px; --r-lg:24px; --r-xl:34px;
+  --pad:clamp(16px,4vw,28px);
+  --maxw:1240px;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --font:"Inter","Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --mono:"SFMono-Regular",ui-monospace,Consolas,"Roboto Mono",monospace;
+}
+
+html[data-theme="dark"]{
+  --bg:#0b0d10;
+  --bg-2:#0f1216;
+  --panel:#14181e;
+  --panel-2:#1a1f26;
+  --elev:0 24px 60px -20px rgba(0,0,0,.75);
+  --text:#e9eef4;
+  --text-dim:#9aa7b5;
+  --text-faint:#66727f;
+  --line:rgba(255,255,255,.085);
+  --line-strong:rgba(255,255,255,.16);
+  --glass:rgba(20,24,30,.72);
+  --map-ground:#12161c;
+  --map-block:#1a2029;
+  --map-road:#252d38;
+  --map-road-line:#3a4553;
+  --grid-glow:rgba(47,191,135,.10);
+  --shine:rgba(255,255,255,.06);
+}
+html[data-theme="light"]{
+  /* mint at full brightness fails contrast as small text on white,
+     so light mode darkens the brand while keeping the same hue */
+  --brand:#0f9268;
+  --brand-deep:#0a6349;
+  --bg:#f4f6fa;
+  --bg-2:#eaeef5;
+  --panel:#ffffff;
+  --panel-2:#f6f8fc;
+  --elev:0 22px 50px -24px rgba(16,26,40,.28);
+  --text:#101720;
+  --text-dim:#546070;
+  --text-faint:#8a95a3;
+  --line:rgba(16,26,40,.10);
+  --line-strong:rgba(16,26,40,.18);
+  --glass:rgba(255,255,255,.78);
+  --map-ground:#e7ecf3;
+  --map-block:#dbe2ec;
+  --map-road:#ffffff;
+  --map-road-line:#c3ccd8;
+  --grid-glow:rgba(47,191,135,.07);
+  --shine:rgba(16,26,40,.04);
+}
+
+/* ---------- 2. Base ---------- */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  margin:0;font-family:var(--font);background:var(--bg);color:var(--text);
+  line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+  transition:background .45s var(--ease),color .45s var(--ease);
+}
+body.locked{overflow:hidden}
+img,svg{display:block;max-width:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,h4{margin:0;line-height:1.12;letter-spacing:-.02em;font-weight:800}
+p{margin:0}
+::selection{background:var(--brand);color:#fff}
+:focus-visible{outline:2px solid var(--brand-light);outline-offset:3px;border-radius:6px}
+
+.wrap{width:min(100% - 2*var(--pad),var(--maxw));margin-inline:auto}
+.section{padding:clamp(60px,9vw,120px) 0;position:relative}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:9px;font-size:.72rem;font-weight:800;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--brand);
+  padding:7px 14px;border:1px solid color-mix(in srgb,var(--brand) 35%,transparent);
+  border-radius:999px;background:color-mix(in srgb,var(--brand) 9%,transparent);margin-bottom:18px;
+}
+.eyebrow::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--brand);animation:blip 1.6s infinite}
+@keyframes blip{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.25;transform:scale(.7)}}
+.h2{font-size:clamp(1.9rem,4.4vw,3.1rem)}
+.lead{color:var(--text-dim);font-size:clamp(1rem,1.6vw,1.12rem);max-width:62ch}
+.sec-head{margin-bottom:clamp(28px,5vw,52px)}
+
+/* ---------- 3. Buttons ---------- */
+.btn{
+  --bg-btn:var(--panel-2);
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  padding:13px 22px;border-radius:999px;border:1px solid var(--line-strong);
+  background:var(--bg-btn);font-weight:700;font-size:.94rem;cursor:pointer;
+  transition:transform .25s var(--ease),box-shadow .25s var(--ease),background .25s,border-color .25s,opacity .2s;
+  white-space:nowrap;
+}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:translateY(0) scale(.98)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-red{
+  background:linear-gradient(135deg,var(--brand-light),var(--brand) 55%,var(--brand-deep));
+  color:#fff;border-color:transparent;box-shadow:0 12px 30px -10px rgba(47,191,135,.75);
+}
+.btn-red:hover{box-shadow:0 18px 44px -12px rgba(47,191,135,.9)}
+.btn-ghost{background:transparent}
+.btn-ghost:hover{background:var(--panel-2)}
+.btn-sm{padding:9px 15px;font-size:.83rem}
+.btn-block{width:100%}
+.btn .ico{width:18px;height:18px;flex:none}
+
+/* ---------- 4. PRELOADER ---------- */
+#preloader{
+  position:fixed;inset:0;z-index:9999;display:grid;place-items:center;
+  background:
+    radial-gradient(700px 420px at 50% 36%,rgba(47,191,135,.16),transparent 70%),
+    #08090b;
+  transition:opacity .6s ease,visibility .6s;
+}
+#preloader.done{opacity:0;visibility:hidden}
+/* Failsafe: if the script is blocked, throws, or never runs, pure CSS still
+   clears the loader, lifts the curtain, unlocks scrolling and shows content.
+   The page can therefore never sit at 0% the way a missing JS file would. */
+#preloader{animation:plFailsafe 0s linear 7s forwards}
+@keyframes plFailsafe{to{opacity:0;visibility:hidden;pointer-events:none}}
+body.locked{animation:plUnlock 0s linear 7.2s forwards}
+@keyframes plUnlock{to{overflow:visible}}
+#preloader .pl-inner{width:min(90vw,440px);text-align:center;position:relative}
+.pl-rings{position:relative;width:132px;height:132px;margin:0 auto 26px}
+.pl-rings i{
+  position:absolute;inset:0;border-radius:50%;border:2px solid transparent;
+  border-top-color:var(--brand);animation:spin 1.5s linear infinite;
+}
+.pl-rings i:nth-child(2){inset:13px;border-top-color:transparent;border-right-color:rgba(255,255,255,.35);animation-duration:2.1s;animation-direction:reverse}
+.pl-rings i:nth-child(3){inset:26px;border-top-color:transparent;border-bottom-color:var(--brand-light);animation-duration:2.9s}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pl-cross{
+  position:absolute;inset:0;display:grid;place-items:center;
+}
+.pl-cross svg{width:46px;height:46px;filter:drop-shadow(0 0 16px rgba(47,191,135,.85));animation:beat 1.15s var(--ease) infinite}
+@keyframes beat{0%,100%{transform:scale(1)}18%{transform:scale(1.22)}32%{transform:scale(1)}46%{transform:scale(1.13)}}
+.pl-ecg{width:100%;height:78px;margin-bottom:8px}
+.pl-ecg path{
+  fill:none;stroke:var(--brand);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;
+  filter:drop-shadow(0 0 8px rgba(47,191,135,.9));
+  stroke-dasharray:1000;stroke-dashoffset:1000;animation:trace 2.1s linear infinite;
+}
+@keyframes trace{0%{stroke-dashoffset:1000}70%,100%{stroke-dashoffset:-1000}}
+.pl-word{
+  font-size:1.55rem;font-weight:900;letter-spacing:.44em;color:#fff;text-indent:.44em;margin-bottom:6px;
+}
+.pl-word span{display:inline-block;opacity:0;transform:translateY(14px);animation:up .5s var(--ease) forwards}
+@keyframes up{to{opacity:1;transform:none}}
+.pl-sub{color:#7b8794;font-size:.75rem;letter-spacing:.28em;text-transform:uppercase;margin-bottom:22px}
+.pl-bar{height:4px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden}
+.pl-bar i{display:block;height:100%;width:0%;border-radius:99px;background:linear-gradient(90deg,var(--brand-deep),var(--brand-light));box-shadow:0 0 16px var(--brand);transition:width .22s linear}
+.pl-pct{margin-top:10px;font-family:var(--mono);font-size:.8rem;color:#8d99a6;letter-spacing:.1em}
+.pl-curtain{position:fixed;inset:0;z-index:9998;pointer-events:none;display:flex}
+.pl-curtain i{flex:1;background:#08090b;transform:translateY(0);transition:transform .75s var(--ease);
+  animation:plCurtainFailsafe 0s linear 7.1s forwards}
+.pl-curtain.lift i{transform:translateY(-101%)}
+@keyframes plCurtainFailsafe{to{transform:translateY(-101%)}}
+
+/* ---------- 5. HEADER ---------- */
+header.nav{
+  position:fixed;top:0;left:0;right:0;z-index:900;
+  backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);
+  background:transparent;border-bottom:1px solid transparent;transition:.35s var(--ease);
+}
+header.nav.scrolled{background:var(--glass);border-bottom-color:var(--line)}
+.nav-in{display:flex;align-items:center;gap:18px;height:74px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:900;letter-spacing:-.02em;font-size:1.12rem;margin-right:auto}
+.brand-mark{
+  width:38px;height:38px;border-radius:11px;flex:none;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--brand-light),var(--brand-deep));
+  box-shadow:0 8px 22px -8px rgba(47,191,135,.9);
+}
+.brand-mark svg{width:20px;height:20px}
+.brand small{display:block;font-size:.6rem;font-weight:700;letter-spacing:.2em;color:var(--text-faint);text-transform:uppercase}
+.nav-links{display:flex;gap:4px}
+.nav-links a{
+  padding:9px 14px;border-radius:999px;font-size:.9rem;font-weight:600;color:var(--text-dim);
+  transition:.2s;position:relative;
+}
+.nav-links a:hover,.nav-links a.active{color:var(--text);background:var(--panel-2)}
+.nav-tools{display:flex;align-items:center;gap:8px}
+.icon-btn{
+  width:40px;height:40px;border-radius:12px;display:grid;place-items:center;cursor:pointer;
+  border:1px solid var(--line-strong);background:var(--panel-2);transition:.25s var(--ease);
+}
+.icon-btn:hover{transform:translateY(-2px);border-color:var(--brand)}
+.icon-btn svg{width:19px;height:19px}
+#themeBtn .moon{display:none}
+html[data-theme="light"] #themeBtn .moon{display:block}
+html[data-theme="light"] #themeBtn .sun{display:none}
+.burger{display:none}
+.nav-emerg{display:flex;align-items:center;gap:10px;font-weight:800;font-size:.9rem;padding:11px 18px;border-radius:999px;
+  background:linear-gradient(135deg,var(--brand-light),var(--brand-deep));color:#fff;box-shadow:0 10px 26px -10px rgba(47,191,135,.9)}
+.nav-emerg .dot{width:8px;height:8px;border-radius:50%;background:#fff;animation:blip 1.2s infinite}
+
+@media (max-width:1000px){
+  .nav-links{
+    position:fixed;inset:74px 0 auto 0;flex-direction:column;gap:2px;padding:14px var(--pad) 22px;
+    background:var(--glass);backdrop-filter:blur(18px);border-bottom:1px solid var(--line);
+    transform:translateY(-130%);transition:transform .45s var(--ease);
+  }
+  .nav-links.open{transform:none}
+  .nav-links a{padding:13px 14px;font-size:1rem}
+  .burger{display:grid}
+  .nav-emerg span{display:none}
+}
+
+/* ---------- 6. HERO ---------- */
+.hero{position:relative;padding-top:150px;padding-bottom:60px;overflow:hidden}
+.hero::before{
+  content:"";position:absolute;inset:-20% -10% auto -10%;height:900px;z-index:-2;
+  background:
+    radial-gradient(620px 400px at 18% 20%,var(--grid-glow),transparent 65%),
+    radial-gradient(560px 380px at 82% 8%,color-mix(in srgb,var(--blue) 14%,transparent),transparent 68%);
+}
+.hero::after{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:64px 64px;
+  mask-image:radial-gradient(ellipse 90% 60% at 50% 30%,#000 20%,transparent 78%);
+  -webkit-mask-image:radial-gradient(ellipse 90% 60% at 50% 30%,#000 20%,transparent 78%);
+}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(28px,4vw,60px);align-items:center}
+.hero h1{font-size:clamp(2.4rem,6.2vw,4.5rem);letter-spacing:-.035em;margin-bottom:20px}
+.hero h1 .accent{
+  background:linear-gradient(120deg,var(--brand-light),var(--brand) 40%,var(--amber));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.hero .lead{margin-bottom:30px;font-size:clamp(1rem,1.8vw,1.18rem)}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:34px}
+.trustline{display:flex;flex-wrap:wrap;gap:22px;color:var(--text-faint);font-size:.85rem;font-weight:600}
+.trustline span{display:flex;align-items:center;gap:7px}
+.trustline svg{width:15px;height:15px;color:var(--green)}
+
+.stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:48px}
+.stat{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--r-md);padding:18px 20px;
+  position:relative;overflow:hidden;
+}
+.stat::after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--brand);opacity:.85}
+.stat b{display:block;font-size:clamp(1.5rem,3vw,2.1rem);font-weight:900;letter-spacing:-.03em;line-height:1}
+.stat small{color:var(--text-dim);font-size:.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.09em}
+
+/* hero card: live ER board */
+.board{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--r-xl);padding:24px;
+  box-shadow:var(--elev);position:relative;overflow:hidden;
+}
+.board::before{
+  content:"";position:absolute;inset:0;background:linear-gradient(160deg,var(--shine),transparent 45%);pointer-events:none;
+}
+.board-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.board-top h3{font-size:1.02rem}
+.livechip{display:inline-flex;align-items:center;gap:7px;font-size:.7rem;font-weight:800;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--green);background:color-mix(in srgb,var(--green) 12%,transparent);
+  padding:5px 11px;border-radius:999px;border:1px solid color-mix(in srgb,var(--green) 32%,transparent)}
+.livechip::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green);animation:blip 1.4s infinite}
+.board-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.bcell{background:var(--panel-2);border:1px solid var(--line);border-radius:var(--r-md);padding:14px 16px}
+.bcell .k{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-faint);font-weight:700;margin-bottom:5px}
+.bcell .v{font-size:1.7rem;font-weight:900;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1.1}
+.bcell .v em{font-style:normal;font-size:.8rem;color:var(--text-dim);font-weight:700;margin-left:3px}
+.meter{height:6px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:9px}
+.meter i{display:block;height:100%;border-radius:99px;transition:width 1s var(--ease)}
+.wave{display:flex;align-items:flex-end;gap:3px;height:34px;margin-top:10px}
+.wave i{flex:1;background:linear-gradient(180deg,var(--brand-light),color-mix(in srgb,var(--brand) 25%,transparent));border-radius:2px;transition:height .6s var(--ease)}
+
+@media (max-width:960px){
+  .hero-grid{grid-template-columns:1fr}
+  .stat-strip{grid-template-columns:repeat(2,1fr)}
+}
+
+/* ---------- 7. DISPATCH ---------- */
+.dispatch-grid{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:clamp(20px,3vw,34px);align-items:start}
+@media (max-width:1040px){.dispatch-grid{grid-template-columns:1fr}}
+
+.card{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--r-xl);
+  padding:clamp(20px,3vw,30px);box-shadow:var(--elev);position:relative;overflow:hidden;
+}
+.card-title{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.card-title h3{font-size:1.25rem}
+.card-title .badge{
+  width:38px;height:38px;border-radius:11px;display:grid;place-items:center;flex:none;
+  background:color-mix(in srgb,var(--brand) 14%,transparent);color:var(--brand);border:1px solid color-mix(in srgb,var(--brand) 30%,transparent);
+}
+.card-title .badge svg{width:19px;height:19px}
+.card-sub{color:var(--text-dim);font-size:.9rem;margin-bottom:22px}
+
+.field{margin-bottom:15px}
+.field label{display:block;font-size:.76rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--text-dim);margin-bottom:7px}
+.field .req{color:var(--brand)}
+.control{
+  width:100%;padding:13px 15px;border-radius:var(--r-sm);border:1px solid var(--line-strong);
+  background:var(--panel-2);transition:.22s;font-size:.95rem;
+}
+.control::placeholder{color:var(--text-faint)}
+.control:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 4px color-mix(in srgb,var(--brand) 16%,transparent);background:var(--panel)}
+textarea.control{resize:vertical;min-height:86px}
+select.control{appearance:none;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a95a3' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 13px center;background-size:16px;padding-right:40px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+@media (max-width:520px){.row2{grid-template-columns:1fr}}
+.loc-wrap{position:relative}
+.loc-wrap .control{padding-right:120px}
+.loc-btn{position:absolute;right:6px;top:6px;bottom:6px;padding:0 13px;border-radius:8px;border:1px solid var(--line-strong);
+  background:var(--panel);font-size:.76rem;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:6px;transition:.2s}
+.loc-btn:hover{border-color:var(--brand);color:var(--brand)}
+.loc-btn svg{width:14px;height:14px}
+
+.sev{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.sev input{position:absolute;opacity:0;pointer-events:none}
+.sev label{
+  display:block;text-align:center;padding:13px 8px;border-radius:var(--r-sm);border:1px solid var(--line-strong);
+  background:var(--panel-2);cursor:pointer;transition:.22s var(--ease);font-size:.8rem;font-weight:800;
+  text-transform:none;letter-spacing:0;color:var(--text);margin:0;
+}
+.sev label i{display:block;font-style:normal;font-size:.68rem;font-weight:600;color:var(--text-faint);margin-top:3px;text-transform:none;letter-spacing:0}
+.sev label:hover{transform:translateY(-2px)}
+.sev input:checked + label{border-color:currentColor;box-shadow:0 0 0 3px color-mix(in srgb,currentColor 18%,transparent)}
+.sev .s-crit input:checked + label{color:var(--danger);background:color-mix(in srgb,var(--danger) 12%,transparent)}
+.sev .s-ser  input:checked + label{color:var(--amber);background:color-mix(in srgb,var(--amber) 12%,transparent)}
+.sev .s-sta  input:checked + label{color:var(--green);background:color-mix(in srgb,var(--green) 12%,transparent)}
+
+.check{display:flex;gap:11px;align-items:flex-start;font-size:.84rem;color:var(--text-dim);margin:16px 0 20px;cursor:pointer}
+.check input{width:19px;height:19px;accent-color:var(--brand);flex:none;margin-top:1px;cursor:pointer}
+.err{color:var(--brand);font-size:.76rem;font-weight:700;margin-top:6px;display:none}
+.field.invalid .control{border-color:var(--brand);box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 14%,transparent)}
+.field.invalid .err{display:block}
+
+.spinner{width:17px;height:17px;border-radius:50%;border:2.5px solid rgba(255,255,255,.35);border-top-color:#fff;animation:spin .7s linear infinite}
+
+/* ---------- 8. TRACKER + 7-SEGMENT CLOCK ---------- */
+#trackPanel{display:none}
+#trackPanel.on{display:block;animation:panelIn .7s var(--ease) both}
+@keyframes panelIn{from{opacity:0;transform:translateY(26px) scale(.985)}to{opacity:1;transform:none}}
+#idlePanel{display:grid;place-items:center;text-align:center;min-height:420px;gap:14px}
+#idlePanel.off{display:none}
+#idlePanel .ghost{
+  width:96px;height:96px;border-radius:26px;display:grid;place-items:center;
+  background:var(--panel-2);border:1px dashed var(--line-strong);color:var(--text-faint);
+}
+#idlePanel .ghost svg{width:44px;height:44px}
+
+.track-head{display:flex;flex-wrap:wrap;align-items:center;gap:12px;justify-content:space-between;margin-bottom:20px}
+.unit-tag{display:flex;align-items:center;gap:12px}
+.siren{
+  width:44px;height:44px;border-radius:13px;display:grid;place-items:center;flex:none;color:#fff;
+  background:linear-gradient(135deg,var(--brand-light),var(--brand-deep));animation:siren 1.1s infinite;
+}
+@keyframes siren{0%,100%{box-shadow:0 0 0 0 rgba(47,191,135,.6)}70%{box-shadow:0 0 0 16px rgba(47,191,135,0)}}
+.siren svg{width:22px;height:22px}
+.unit-tag b{display:block;font-size:1.05rem;letter-spacing:-.01em}
+.unit-tag small{color:var(--text-dim);font-size:.8rem}
+
+/* clock — mirrors the reference screenshot */
+.clock-shell{
+  display:flex;flex-direction:column;align-items:center;gap:14px;
+  padding:clamp(16px,3vw,26px);border-radius:var(--r-xl);
+  background:
+    radial-gradient(120% 90% at 50% 0%,color-mix(in srgb,var(--brand) 12%,transparent),transparent 60%),
+    var(--panel-2);
+  border:1px solid var(--line);margin-bottom:20px;
+}
+.clock-label{font-size:.7rem;font-weight:800;letter-spacing:.26em;text-transform:uppercase;color:var(--text-faint)}
+.clock-frame{
+  background:var(--clock-frame);border-radius:26px;padding:clamp(9px,1.6vw,13px);
+  box-shadow:0 20px 50px -18px rgba(47,191,135,.65),inset 0 1px 0 rgba(255,255,255,.28);
+}
+.clock-face{
+  background:var(--clock-face);border-radius:18px;padding:clamp(14px,2.6vw,24px) clamp(16px,3vw,28px);
+  display:flex;align-items:center;gap:clamp(6px,1.4vw,12px);
+  box-shadow:inset 0 3px 18px rgba(0,0,0,.6);
+}
+.seg-digit{width:clamp(38px,7.4vw,66px);height:auto;flex:none}
+.seg-digit polygon{transition:fill .12s linear,filter .12s linear}
+.seg-off{fill:var(--seg-off)}
+.seg-on{fill:var(--seg-on);filter:drop-shadow(0 0 7px rgba(62,224,138,.75))}
+.seg-colon{display:flex;flex-direction:column;justify-content:center;gap:clamp(14px,2.6vw,26px);
+  padding-inline:clamp(2px,.7vw,6px);height:clamp(66px,13vw,118px)}
+.seg-colon i{width:clamp(10px,1.9vw,17px);height:clamp(10px,1.9vw,17px);border-radius:3px;background:var(--seg-on);
+  box-shadow:0 0 8px rgba(62,224,138,.75);transition:opacity .1s}
+.seg-colon.dim i{opacity:.13;box-shadow:none}
+.clock-shell.arrived .clock-frame{animation:frameFlash 1s ease-in-out 3}
+@keyframes frameFlash{0%,100%{filter:none}50%{filter:brightness(1.7)}}
+.clock-meta{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+
+.chip{
+  display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border-radius:999px;
+  border:1px solid var(--line-strong);background:var(--panel);font-size:.79rem;font-weight:700;
+}
+.chip svg{width:14px;height:14px;color:var(--brand)}
+.chip b{font-variant-numeric:tabular-nums}
+
+.speeds{display:flex;gap:6px;align-items:center;justify-content:center;margin-top:2px}
+.speeds .lbl{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-faint);font-weight:800;margin-right:4px}
+.spd{padding:5px 11px;border-radius:999px;border:1px solid var(--line-strong);background:var(--panel);
+  font-size:.74rem;font-weight:800;cursor:pointer;transition:.2s}
+.spd.on{background:var(--brand);border-color:var(--brand);color:#fff}
+
+/* map */
+.map-box{position:relative;border-radius:var(--r-lg);overflow:hidden;border:1px solid var(--line);background:var(--map-ground)}
+.map-box svg{width:100%;height:auto;display:block}
+.map-legend{
+  position:absolute;left:12px;bottom:12px;display:flex;gap:8px;flex-wrap:wrap;
+}
+.map-legend span{display:inline-flex;align-items:center;gap:6px;font-size:.7rem;font-weight:700;
+  background:var(--glass);backdrop-filter:blur(8px);padding:5px 10px;border-radius:999px;border:1px solid var(--line)}
+.map-legend i{width:8px;height:8px;border-radius:50%}
+.map-badge{
+  position:absolute;right:12px;top:12px;background:var(--glass);backdrop-filter:blur(10px);
+  border:1px solid var(--line);border-radius:12px;padding:9px 13px;font-size:.74rem;font-weight:800;
+  display:flex;align-items:center;gap:8px;
+}
+.map-badge .pulse{width:8px;height:8px;border-radius:50%;background:var(--brand);animation:blip 1s infinite}
+
+.timeline{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:20px}
+.step{position:relative;padding-top:22px;font-size:.78rem;color:var(--text-faint);font-weight:700}
+.step::before{content:"";position:absolute;top:5px;left:0;right:0;height:3px;border-radius:99px;background:var(--line)}
+.step::after{content:"";position:absolute;top:0;left:0;width:13px;height:13px;border-radius:50%;
+  background:var(--panel);border:3px solid var(--line)}
+.step.done{color:var(--text)}
+.step.done::before{background:var(--brand)}
+.step.done::after{background:var(--brand);border-color:var(--brand)}
+.step.now::after{animation:siren 1.2s infinite}
+.step b{display:block;font-size:.68rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint)}
+
+.crew{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:20px}
+.crew .c{background:var(--panel-2);border:1px solid var(--line);border-radius:var(--r-md);padding:12px 14px}
+.crew .c small{display:block;font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-faint);font-weight:800}
+.crew .c b{font-size:.92rem}
+.track-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+
+/* ---------- 9. DOCTORS ---------- */
+.doc-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:24px}
+.search{position:relative;flex:1;min-width:230px}
+.search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:17px;height:17px;color:var(--text-faint)}
+.search .control{padding-left:42px}
+.filters{display:flex;gap:7px;flex-wrap:wrap}
+.fchip{padding:9px 15px;border-radius:999px;border:1px solid var(--line-strong);background:var(--panel);
+  font-size:.82rem;font-weight:700;cursor:pointer;transition:.22s var(--ease)}
+.fchip:hover{transform:translateY(-2px)}
+.fchip.on{background:var(--brand);border-color:var(--brand);color:#fff;box-shadow:0 10px 24px -12px rgba(47,191,135,.9)}
+
+.doc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(272px,1fr));gap:16px}
+.doc{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--r-lg);padding:20px;
+  position:relative;overflow:hidden;transition:.35s var(--ease);
+}
+.doc:hover{transform:translateY(-6px);border-color:var(--line-strong);box-shadow:var(--elev)}
+.doc::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:var(--dc,var(--brand));opacity:.9}
+.doc-top{display:flex;gap:13px;align-items:center;margin-bottom:14px}
+.avatar{
+  width:54px;height:54px;border-radius:16px;flex:none;display:grid;place-items:center;
+  font-weight:900;font-size:1.05rem;color:#fff;letter-spacing:.02em;
+  background:linear-gradient(135deg,var(--dc,var(--brand)),color-mix(in srgb,var(--dc,var(--brand)) 55%,#000));
+  position:relative;
+}
+.avatar .ring{position:absolute;inset:-4px;border-radius:20px;border:2px solid var(--dc,var(--brand));opacity:.28}
+.doc-name{font-weight:800;font-size:1rem;letter-spacing:-.01em}
+.doc-spec{font-size:.82rem;color:var(--dc,var(--brand));font-weight:700}
+.doc-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.mchip{font-size:.72rem;font-weight:700;padding:5px 10px;border-radius:8px;background:var(--panel-2);
+  border:1px solid var(--line);color:var(--text-dim);display:inline-flex;gap:5px;align-items:center}
+.mchip svg{width:12px;height:12px}
+.status{display:flex;align-items:center;gap:8px;font-size:.8rem;font-weight:800;margin-bottom:14px}
+.status .d{width:9px;height:9px;border-radius:50%;flex:none}
+.st-available{color:var(--green)} .st-available .d{background:var(--green);box-shadow:0 0 0 0 var(--green);animation:ping 1.6s infinite}
+.st-oncall{color:var(--amber)} .st-oncall .d{background:var(--amber)}
+.st-surgery{color:var(--danger)} .st-surgery .d{background:var(--danger)}
+.st-off{color:var(--text-faint)} .st-off .d{background:var(--text-faint)}
+@keyframes ping{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--green) 70%,transparent)}70%{box-shadow:0 0 0 9px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.doc-actions{display:flex;gap:8px}
+.doc-del{
+  position:absolute;top:12px;right:12px;width:26px;height:26px;border-radius:8px;display:none;place-items:center;
+  border:1px solid var(--line-strong);background:var(--panel-2);cursor:pointer;color:var(--brand);font-weight:900;line-height:1;
+}
+body.editing .doc-del{display:grid}
+.doc-add{
+  border:1px dashed var(--line-strong);border-radius:var(--r-lg);display:none;place-items:center;
+  min-height:200px;cursor:pointer;color:var(--text-dim);font-weight:800;gap:8px;flex-direction:column;
+  background:transparent;transition:.25s;
+}
+body.editing .doc-add{display:flex}
+.doc-add:hover{border-color:var(--brand);color:var(--brand)}
+.doc-add svg{width:30px;height:30px}
+.empty{padding:44px;text-align:center;color:var(--text-faint);border:1px dashed var(--line-strong);border-radius:var(--r-lg)}
+
+/* ---------- 10. DEPARTMENTS ---------- */
+.dept-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.dept{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--r-lg);padding:24px;
+  transition:.35s var(--ease);position:relative;overflow:hidden;
+}
+.dept:hover{transform:translateY(-6px);box-shadow:var(--elev)}
+.dept:hover .dico{transform:scale(1.08) rotate(-6deg)}
+.dico{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;margin-bottom:15px;
+  background:color-mix(in srgb,var(--dc) 14%,transparent);color:var(--dc);
+  border:1px solid color-mix(in srgb,var(--dc) 28%,transparent);transition:.4s var(--ease)}
+.dico svg{width:24px;height:24px}
+.dept h4{font-size:1.02rem;margin-bottom:7px}
+.dept p{font-size:.87rem;color:var(--text-dim)}
+.dept .tag{margin-top:14px;font-size:.72rem;font-weight:800;color:var(--dc);letter-spacing:.06em;text-transform:uppercase}
+
+/* ---------- 11. CONTACT / FOOTER ---------- */
+.contact-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(20px,3vw,34px)}
+@media (max-width:900px){.contact-grid{grid-template-columns:1fr}}
+.cinfo{display:grid;gap:12px}
+.crow{display:flex;gap:14px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);
+  border-radius:var(--r-md);padding:16px 18px}
+.crow .ci{width:38px;height:38px;border-radius:11px;flex:none;display:grid;place-items:center;
+  background:color-mix(in srgb,var(--brand) 13%,transparent);color:var(--brand)}
+.crow .ci svg{width:18px;height:18px}
+.crow small{display:block;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-faint);font-weight:800}
+.crow b{font-size:.97rem}
+
+.emerg-banner{
+  border-radius:var(--r-xl);padding:clamp(26px,4vw,44px);text-align:center;color:#fff;position:relative;overflow:hidden;
+  background:linear-gradient(135deg,var(--brand-deep),var(--brand) 45%,var(--brand-light));
+  box-shadow:0 30px 70px -30px rgba(47,191,135,.9);
+}
+.emerg-banner::after{content:"";position:absolute;inset:0;
+  background-image:radial-gradient(circle at 20% 20%,rgba(255,255,255,.22),transparent 40%),
+                   radial-gradient(circle at 80% 70%,rgba(0,0,0,.2),transparent 45%)}
+.emerg-banner > *{position:relative;z-index:1}
+.emerg-banner h3{font-size:clamp(1.5rem,3.6vw,2.3rem);margin-bottom:10px}
+.emerg-banner p{opacity:.92;margin-bottom:22px}
+.emerg-num{font-size:clamp(2rem,6vw,3.4rem);font-weight:900;letter-spacing:.02em;font-variant-numeric:tabular-nums}
+
+footer{border-top:1px solid var(--line);padding:52px 0 34px;background:var(--bg-2)}
+.foot-grid{display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:32px;margin-bottom:34px}
+@media (max-width:820px){.foot-grid{grid-template-columns:1fr 1fr}}
+.foot-grid h5{font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-faint);margin:0 0 14px;font-weight:800}
+.foot-grid ul{list-style:none;margin:0;padding:0;display:grid;gap:9px}
+.foot-grid a{color:var(--text-dim);font-size:.89rem;transition:.2s}
+.foot-grid a:hover{color:var(--brand)}
+.foot-bot{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;
+  padding-top:22px;border-top:1px solid var(--line);color:var(--text-faint);font-size:.82rem}
+
+/* ---------- 12. EDIT MODE ---------- */
+[data-eid]{transition:outline-color .2s,background .2s;outline:1px dashed transparent;outline-offset:4px;border-radius:4px}
+body.editing [data-eid]{outline-color:color-mix(in srgb,var(--brand) 55%,transparent);cursor:text}
+body.editing [data-eid]:hover{background:color-mix(in srgb,var(--brand) 8%,transparent)}
+body.editing [data-eid]:focus{outline:2px solid var(--brand);background:color-mix(in srgb,var(--brand) 6%,transparent)}
+#editBar{
+  position:fixed;left:50%;bottom:18px;transform:translate(-50%,160%);z-index:940;
+  display:flex;flex-wrap:wrap;align-items:center;gap:9px;padding:11px 14px;border-radius:var(--r-lg);
+  background:var(--glass);backdrop-filter:blur(16px);border:1px solid var(--line-strong);box-shadow:var(--elev);
+  transition:transform .5s var(--ease);max-width:calc(100vw - 24px);
+}
+#editBar.on{transform:translate(-50%,0)}
+#editBar .tag{display:inline-flex;align-items:center;gap:8px;font-size:.78rem;font-weight:800;color:var(--brand);
+  padding-right:10px;border-right:1px solid var(--line);margin-right:2px}
+#editBar .tag::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--brand);animation:blip 1.3s infinite}
+
+.modal{
+  position:fixed;inset:0;z-index:960;display:grid;place-items:center;padding:20px;
+  background:rgba(0,0,0,.62);backdrop-filter:blur(6px);opacity:0;visibility:hidden;transition:.32s var(--ease);
+}
+.modal.on{opacity:1;visibility:visible}
+.modal .sheet{
+  width:min(100%,430px);background:var(--panel);border:1px solid var(--line-strong);border-radius:var(--r-xl);
+  padding:28px;box-shadow:var(--elev);transform:translateY(22px) scale(.97);transition:.4s var(--ease);
+}
+.modal.on .sheet{transform:none}
+.modal h3{font-size:1.25rem;margin-bottom:8px}
+.modal p{color:var(--text-dim);font-size:.88rem;margin-bottom:20px}
+.pin{display:flex;gap:10px;justify-content:center;margin-bottom:8px}
+.pin input{
+  width:56px;height:64px;text-align:center;font-size:1.6rem;font-weight:900;border-radius:var(--r-sm);
+  border:1px solid var(--line-strong);background:var(--panel-2);font-family:var(--mono);
+}
+.pin input:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 4px color-mix(in srgb,var(--brand) 16%,transparent)}
+.hint{font-size:.76rem;color:var(--text-faint);text-align:center;margin-bottom:18px}
+.modal .actions{display:flex;gap:10px}
+
+/* ---------- 13. TOASTS + REVEAL + MISC ---------- */
+#toasts{position:fixed;right:16px;bottom:16px;z-index:980;display:grid;gap:10px;width:min(340px,calc(100vw - 32px))}
+.toast{
+  display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:var(--r-md);
+  background:var(--glass);backdrop-filter:blur(14px);border:1px solid var(--line-strong);box-shadow:var(--elev);
+  animation:toastIn .45s var(--ease) both;
+}
+.toast.out{animation:toastOut .35s var(--ease) forwards}
+@keyframes toastIn{from{opacity:0;transform:translateX(40px) scale(.95)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateX(40px) scale(.95)}}
+.toast .ti{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;flex:none;font-size:.8rem}
+.toast b{display:block;font-size:.88rem}
+.toast small{color:var(--text-dim);font-size:.8rem;line-height:1.45}
+
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .8s var(--ease),transform .8s var(--ease);
+  animation:revealFailsafe 0s linear 7.6s forwards}
+@keyframes revealFailsafe{to{opacity:1;transform:none}}
+.reveal.in{opacity:1;transform:none}
+
+#progress{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--brand-deep),var(--brand-light));z-index:950;box-shadow:0 0 12px var(--brand)}
+#toTop{position:fixed;right:16px;bottom:16px;z-index:930;opacity:0;pointer-events:none;transition:.35s var(--ease)}
+#toTop.on{opacity:1;pointer-events:auto}
+body.editing #toTop{bottom:82px}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
+  html{scroll-behavior:auto}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+
+<body class="locked">
+
+<!-- ========== PRELOADER ========== -->
+<div class="pl-curtain" id="curtain"><i></i><i></i><i></i><i></i><i></i></div>
+<div id="preloader">
+  <div class="pl-inner">
+    <div class="pl-rings">
+      <i></i><i></i><i></i>
+      <div class="pl-cross">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M10 3h4v7h7v4h-7v7h-4v-7H3v-4h7z" fill="#2fbf87"/></svg>
+      </div>
+    </div>
+    <svg class="pl-ecg" viewBox="0 0 400 90" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 55 H86 l10 -30 l13 58 l11 -46 l9 18 h38 l9 -22 l11 34 l9 -12 H400"/>
+    </svg>
+    <div class="pl-word" id="plWord"></div>
+    <div class="pl-sub">Emergency &amp; Critical Care</div>
+    <div class="pl-bar"><i id="plBar"></i></div>
+    <div class="pl-pct" id="plPct">INITIALISING SYSTEMS · 0%</div>
+  </div>
+</div>
+
+<div id="progress"></div>
+
+<!-- ========== HEADER ========== -->
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a href="#home" class="brand">
+      <span class="brand-mark"><svg viewBox="0 0 24 24"><path d="M10 3h4v7h7v4h-7v7h-4v-7H3v-4h7z" fill="#fff"/></svg></span>
+      <span>
+        <span data-eid="brand.name">Vitalis</span>
+        <small data-eid="brand.tag">Emergency Hospital</small>
+      </span>
+    </a>
+
+    <nav class="nav-links" id="navLinks">
+      <a href="#home">Home</a>
+      <a href="#dispatch">Ambulance</a>
+      <a href="#doctors">Doctors</a>
+      <a href="#departments">Departments</a>
+      <a href="#contact">Contact</a>
+    </nav>
+
+    <div class="nav-tools">
+      <button class="icon-btn" id="themeBtn" title="Toggle light / dark theme" aria-label="Toggle theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.6M12 19.4V22M4.2 4.2l1.9 1.9M17.9 17.9l1.9 1.9M2 12h2.6M19.4 12H22M4.2 19.8l1.9-1.9M17.9 6.1l1.9-1.9"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A8.6 8.6 0 1111.2 3a6.9 6.9 0 009.8 9.8z"/></svg>
+      </button>
+      <button class="icon-btn" id="editBtn" title="Editing access (staff)" aria-label="Editing access">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>
+      </button>
+      <button class="icon-btn burger" id="burger" aria-label="Menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+      <a href="#dispatch" class="nav-emerg"><span class="dot"></span><span>Emergency</span> 108</a>
+    </div>
+  </div>
+</header>
+
+<main>
+<!-- ========== HERO ========== -->
+<section class="hero" id="home">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <span class="eyebrow" data-eid="hero.eyebrow">Level‑1 Trauma Centre · Open 24/7</span>
+        <h1 data-eid="hero.title">Every second counts.<br><span class="accent">We move faster.</span></h1>
+        <p class="lead" data-eid="hero.lead">Request an ambulance in under fifteen seconds, watch the unit approach on a live map, and see exactly which emergency consultants are on the floor right now — before you even leave the house.</p>
+        <div class="hero-cta">
+          <a href="#dispatch" class="btn btn-red">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17h1l1-4h9l3 4h2a1 1 0 001-1v-3.2a2 2 0 00-.6-1.4L17 8h-3V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1z"/><circle cx="7.5" cy="18" r="1.9"/><circle cx="17" cy="18" r="1.9"/><path d="M8.5 8.5h3M10 7v3"/></svg>
+            Call an ambulance
+          </a>
+          <a href="#doctors" class="btn btn-ghost">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20a7.5 7.5 0 0115 0"/></svg>
+            See active doctors
+          </a>
+        </div>
+        <div class="trustline">
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span data-eid="trust.1">NABH accredited</span></span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span data-eid="trust.2">42 ALS ambulances</span></span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span data-eid="trust.3">Cath-lab always primed</span></span>
+        </div>
+      </div>
+
+      <!-- live ER board -->
+      <div class="board reveal">
+        <div class="board-top">
+          <h3 data-eid="board.title">Emergency floor · live</h3>
+          <span class="livechip">Live</span>
+        </div>
+        <div class="board-grid">
+          <div class="bcell">
+            <div class="k">Average wait</div>
+            <div class="v"><span id="bWait">6</span><em>min</em></div>
+            <div class="meter"><i id="mWait" style="width:32%;background:var(--green)"></i></div>
+          </div>
+          <div class="bcell">
+            <div class="k">ER beds free</div>
+            <div class="v"><span id="bBeds">14</span><em>/ 40</em></div>
+            <div class="meter"><i id="mBeds" style="width:35%;background:var(--blue)"></i></div>
+          </div>
+          <div class="bcell">
+            <div class="k">ICU capacity</div>
+            <div class="v"><span id="bIcu">72</span><em>%</em></div>
+            <div class="meter"><i id="mIcu" style="width:72%;background:var(--amber)"></i></div>
+          </div>
+          <div class="bcell">
+            <div class="k">Units standing by</div>
+            <div class="v"><span id="bAmb">9</span><em>ready</em></div>
+            <div class="meter"><i id="mAmb" style="width:60%;background:var(--brand)"></i></div>
+          </div>
+        </div>
+        <div class="bcell" style="margin-top:12px">
+          <div class="k">Admissions · last 12 hours</div>
+          <div class="wave" id="wave"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-strip">
+      <div class="stat reveal"><b><span class="count" data-to="7" data-suffix="">0</span> min</b><small data-eid="stat.1">Median city response</small></div>
+      <div class="stat reveal"><b><span class="count" data-to="128">0</span>+</b><small data-eid="stat.2">Specialist consultants</small></div>
+      <div class="stat reveal"><b><span class="count" data-to="99" data-dec="1">0</span>%</b><small data-eid="stat.3">Triage within 2 min</small></div>
+      <div class="stat reveal"><b><span class="count" data-to="24">0</span>/7</b><small data-eid="stat.4">Trauma &amp; cath lab</small></div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== DISPATCH ========== -->
+<section class="section" id="dispatch">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Ambulance dispatch</span>
+      <h2 class="h2" data-eid="disp.title">Call a unit. Watch it come.</h2>
+      <p class="lead" data-eid="disp.lead">Fill the form and the nearest available ambulance is assigned instantly. You'll get a live route, a moving vehicle marker, and a countdown clock that ticks down to the second it reaches your door.</p>
+    </div>
+
+    <div class="dispatch-grid">
+      <!-- FORM -->
+      <div class="card reveal">
+        <div class="card-title">
+          <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17h1l1-4h9l3 4h2a1 1 0 001-1v-3.2a2 2 0 00-.6-1.4L17 8h-3V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1z"/><circle cx="7.5" cy="18" r="1.9"/><circle cx="17" cy="18" r="1.9"/></svg></span>
+          <h3 data-eid="form.title">Request an ambulance</h3>
+        </div>
+        <p class="card-sub" data-eid="form.sub">Average dispatch confirmation: 11 seconds. Keep the patient still and the airway clear while you type.</p>
+
+        <form id="ambForm" novalidate>
+          <div class="row2">
+            <div class="field" data-f>
+              <label for="pName">Patient name <span class="req">*</span></label>
+              <input class="control" id="pName" name="pName" placeholder="e.g. Rahim Uddin" autocomplete="name" required>
+              <div class="err">Please enter the patient's name.</div>
+            </div>
+            <div class="field" data-f>
+              <label for="pPhone">Callback number <span class="req">*</span></label>
+              <input class="control" id="pPhone" name="pPhone" placeholder="e.g. 01712 345678" inputmode="tel" autocomplete="tel" required>
+              <div class="err">Enter a reachable number (at least 7 digits).</div>
+            </div>
+          </div>
+
+          <div class="field" data-f>
+            <label for="pAddr">Pickup location <span class="req">*</span></label>
+            <div class="loc-wrap">
+              <input class="control" id="pAddr" name="pAddr" placeholder="House, road, area — or use GPS" required>
+              <button type="button" class="loc-btn" id="gpsBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.7 7-11a7 7 0 10-14 0c0 5.3 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
+                Use GPS
+              </button>
+            </div>
+            <div class="err">We need an address or coordinates to route the unit.</div>
+          </div>
+
+          <div class="row2">
+            <div class="field">
+              <label for="pType">Emergency type</label>
+              <select class="control" id="pType" name="pType">
+                <option>Cardiac / chest pain</option>
+                <option>Road accident / trauma</option>
+                <option>Stroke symptoms</option>
+                <option>Breathing difficulty</option>
+                <option>Pregnancy / labour</option>
+                <option>Burns</option>
+                <option>Poisoning / overdose</option>
+                <option>Unconscious / collapse</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="pCount">Patients</label>
+              <select class="control" id="pCount" name="pCount">
+                <option>1</option><option>2</option><option>3</option><option>4+</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Severity</label>
+            <div class="sev">
+              <span class="s-crit"><input type="radio" name="sev" id="sv1" value="Critical" checked><label for="sv1">Critical<i>Life threatening</i></label></span>
+              <span class="s-ser"><input type="radio" name="sev" id="sv2" value="Serious"><label for="sv2">Serious<i>Urgent care</i></label></span>
+              <span class="s-sta"><input type="radio" name="sev" id="sv3" value="Stable"><label for="sv3">Stable<i>Transport only</i></label></span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="pNotes">Notes for the crew</label>
+            <textarea class="control" id="pNotes" placeholder="Landmarks, floor / lift access, allergies, medication, bleeding, consciousness…"></textarea>
+          </div>
+
+          <label class="check" data-f>
+            <input type="checkbox" id="pConsent" required>
+            <span>I confirm this is a genuine medical emergency and consent to treatment and transport by the responding crew.</span>
+          </label>
+          <div class="err" id="consentErr" style="margin-top:-12px;margin-bottom:14px">Please confirm before dispatch.</div>
+
+          <button class="btn btn-red btn-block" id="submitBtn" type="submit">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 2 .7 2.9a2 2 0 01-.4 2.1L8.1 9.9a16 16 0 006 6l1.2-1.2a2 2 0 012.1-.5c.9.3 1.9.6 2.9.7a2 2 0 011.7 2z"/></svg>
+            <span id="submitLabel">Dispatch nearest ambulance</span>
+          </button>
+          <p style="font-size:.74rem;color:var(--text-faint);margin-top:12px;text-align:center">
+            This page is a front-end demonstration — nothing is transmitted anywhere. In a real emergency dial <b>999 / 108</b>.
+          </p>
+        </form>
+      </div>
+
+      <!-- TRACKING -->
+      <div class="card reveal">
+        <div id="idlePanel">
+          <div class="ghost">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.7 7-11a7 7 0 10-14 0c0 5.3 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
+          </div>
+          <h3 style="font-size:1.1rem">No active dispatch</h3>
+          <p style="color:var(--text-dim);font-size:.9rem;max-width:34ch">Once you submit the form, live tracking and the arrival countdown appear here.</p>
+        </div>
+
+        <div id="trackPanel">
+          <div class="track-head">
+            <div class="unit-tag">
+              <span class="siren"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17h1l1-4h9l3 4h2a1 1 0 001-1v-3.2a2 2 0 00-.6-1.4L17 8h-3V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1z"/><circle cx="7.5" cy="18" r="1.9"/><circle cx="17" cy="18" r="1.9"/></svg></span>
+              <div>
+                <b id="unitId">AMB‑07 · Advanced Life Support</b>
+                <small id="unitStatus">Dispatched — en route to your location</small>
+              </div>
+            </div>
+            <span class="livechip">Tracking</span>
+          </div>
+
+          <!-- ===== SEVEN SEGMENT COUNTDOWN ===== -->
+          <div class="clock-shell" id="clockShell">
+            <div class="clock-label" id="clockLabel">Estimated arrival</div>
+            <div class="clock-frame">
+              <div class="clock-face" id="clockFace" role="timer" aria-live="polite" aria-atomic="true">
+                <!-- digits injected -->
+              </div>
+            </div>
+            <div class="clock-meta">
+              <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.7 7-11a7 7 0 10-14 0c0 5.3 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><b id="mDist">4.2</b> km away</span>
+              <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Arriving <b id="mEta">—</b></span>
+              <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg><b id="mSpeed">52</b> km/h</span>
+            </div>
+            <div class="speeds">
+              <span class="lbl">Sim speed</span>
+              <button class="spd" data-spd="1" type="button">1×</button>
+              <button class="spd on" data-spd="4" type="button">4×</button>
+              <button class="spd" data-spd="12" type="button">12×</button>
+              <button class="spd" data-spd="40" type="button">40×</button>
+            </div>
+          </div>
+
+          <!-- ===== LIVE MAP ===== -->
+          <div class="map-box">
+            <svg id="map" viewBox="0 0 800 460" aria-label="Live ambulance route map">
+              <defs>
+                <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+                  <feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+                <linearGradient id="routeGrad" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#4fe3a0"/><stop offset="100%" stop-color="#2fbf87"/>
+                </linearGradient>
+              </defs>
+
+              <rect width="800" height="460" fill="var(--map-ground)"/>
+              <g id="blocks" fill="var(--map-block)"></g>
+              <g id="roads" stroke="var(--map-road)" stroke-width="17" stroke-linecap="round"></g>
+              <g id="roadLines" stroke="var(--map-road-line)" stroke-width="1.6" stroke-dasharray="10 12" stroke-linecap="round" opacity=".65"></g>
+
+              <path id="route" d="M 70 400 C 180 400 168 300 268 292 C 356 285 372 226 452 210 C 540 192 566 128 700 108"
+                    fill="none" stroke="var(--map-road-line)" stroke-width="7" stroke-linecap="round" opacity=".55" stroke-dasharray="2 12"/>
+              <path id="routeDone" d="M 70 400 C 180 400 168 300 268 292 C 356 285 372 226 452 210 C 540 192 566 128 700 108"
+                    fill="none" stroke="url(#routeGrad)" stroke-width="7" stroke-linecap="round" filter="url(#glow)"/>
+
+              <!-- hospital -->
+              <g id="hospitalPin" transform="translate(70,400)">
+                <circle r="17" fill="#0f1216" stroke="#3b82f6" stroke-width="3"/>
+                <path d="M-3.5 -8h7v4.5H8v7H3.5V8h-7V3.5H-8v-7h4.5z" fill="#3b82f6"/>
+              </g>
+              <!-- patient -->
+              <g id="patientPin" transform="translate(700,108)">
+                <circle r="26" fill="none" stroke="#2fbf87" stroke-width="2" opacity=".45">
+                  <animate attributeName="r" values="16;30;16" dur="2.2s" repeatCount="indefinite"/>
+                  <animate attributeName="opacity" values=".55;0;.55" dur="2.2s" repeatCount="indefinite"/>
+                </circle>
+                <circle r="15" fill="#2fbf87" filter="url(#glow)"/>
+                <circle r="5.5" fill="#fff"/>
+              </g>
+              <!-- ambulance -->
+              <g id="ambPin">
+                <g transform="translate(-19,-13)">
+                  <rect x="0" y="2" width="38" height="22" rx="6" fill="#fff" stroke="#101720" stroke-width="1.4"/>
+                  <rect x="0" y="2" width="38" height="6" rx="3" fill="#2fbf87"/>
+                  <rect x="24" y="10" width="12" height="9" rx="2.5" fill="#cfe0f5"/>
+                  <path d="M8 12h5v-3h3.4v3h5v3.4h-5v3H13v-3H8z" fill="#2fbf87"/>
+                  <circle cx="10" cy="25" r="4" fill="#101720"/><circle cx="29" cy="25" r="4" fill="#101720"/>
+                  <circle cx="6" cy="0" r="3" fill="#4fe3a0"><animate attributeName="opacity" values="1;.15;1" dur=".6s" repeatCount="indefinite"/></circle>
+                  <circle cx="32" cy="0" r="3" fill="#3b82f6"><animate attributeName="opacity" values=".15;1;.15" dur=".6s" repeatCount="indefinite"/></circle>
+                </g>
+              </g>
+            </svg>
+            <div class="map-badge"><span class="pulse"></span><span id="mapStreet">Turning onto Airport Road</span></div>
+            <div class="map-legend">
+              <span><i style="background:#3b82f6"></i>Vitalis base</span>
+              <span><i style="background:#2fbf87"></i>Your location</span>
+            </div>
+          </div>
+
+          <div class="timeline" id="timeline">
+            <div class="step"><b>Step 1</b>Call received</div>
+            <div class="step"><b>Step 2</b>Unit dispatched</div>
+            <div class="step"><b>Step 3</b>En route</div>
+            <div class="step"><b>Step 4</b>Arrived</div>
+          </div>
+
+          <div class="crew">
+            <div class="c"><small>Paramedic</small><b id="crewMedic">—</b></div>
+            <div class="c"><small>Driver</small><b id="crewDriver">—</b></div>
+            <div class="c"><small>Patient</small><b id="crewPatient">—</b></div>
+            <div class="c"><small>Case</small><b id="crewCase">—</b></div>
+          </div>
+
+          <div class="track-actions">
+            <a class="btn btn-red btn-sm" id="callCrew" href="tel:+8801700000000">
+              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 2 .7 2.9a2 2 0 01-.4 2.1L8.1 9.9a16 16 0 006 6l1.2-1.2a2 2 0 012.1-.5c.9.3 1.9.6 2.9.7a2 2 0 011.7 2z"/></svg>
+              Call the crew
+            </a>
+            <button class="btn btn-ghost btn-sm" id="shareBtn" type="button">Copy tracking summary</button>
+            <button class="btn btn-ghost btn-sm" id="cancelBtn" type="button">Cancel dispatch</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== DOCTORS ========== -->
+<section class="section" id="doctors" style="background:var(--bg-2);border-block:1px solid var(--line)">
+  <div class="wrap">
+    <div class="sec-head reveal" style="display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end;justify-content:space-between">
+      <div>
+        <span class="eyebrow">On the floor right now</span>
+        <h2 class="h2" data-eid="doc.title">Active doctors, ready for emergencies</h2>
+        <p class="lead" data-eid="doc.lead">Status refreshes continuously from the duty board. Anyone marked available can be at the resuscitation bay within minutes.</p>
+      </div>
+      <div class="bcell" style="min-width:200px">
+        <div class="k">Available this minute</div>
+        <div class="v" style="color:var(--green)"><span id="availCount">0</span><em>of <span id="totalCount">0</span></em></div>
+      </div>
+    </div>
+
+    <div class="doc-toolbar reveal">
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg>
+        <input class="control" id="docSearch" placeholder="Search by name, specialty or ward…">
+      </div>
+      <div class="filters" id="docFilters"></div>
+    </div>
+
+    <div class="doc-grid" id="docGrid"></div>
+  </div>
+</section>
+
+<!-- ========== DEPARTMENTS ========== -->
+<section class="section" id="departments">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Centres of excellence</span>
+      <h2 class="h2" data-eid="dept.title">Everything under one roof</h2>
+      <p class="lead" data-eid="dept.lead">Nine acute departments, one shared record, zero handover delay between them.</p>
+    </div>
+    <div class="dept-grid" id="deptGrid"></div>
+  </div>
+</section>
+
+<!-- ========== CONTACT ========== -->
+<section class="section" id="contact" style="background:var(--bg-2);border-top:1px solid var(--line)">
+  <div class="wrap">
+    <div class="contact-grid">
+      <div class="reveal">
+        <span class="eyebrow">Find us</span>
+        <h2 class="h2" style="margin-bottom:14px" data-eid="con.title">We never close</h2>
+        <p class="lead" style="margin-bottom:26px" data-eid="con.lead">The emergency entrance is on the north side of the building, under the red canopy. Ambulance bay access is kept clear at all times.</p>
+        <div class="cinfo">
+          <div class="crow">
+            <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.7 7-11a7 7 0 10-14 0c0 5.3 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg></span>
+            <div><small>Address</small><b data-eid="con.addr">14 Shahid Sarani, Banani, Dhaka 1213</b></div>
+          </div>
+          <div class="crow">
+            <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 2 .7 2.9a2 2 0 01-.4 2.1L8.1 9.9a16 16 0 006 6l1.2-1.2a2 2 0 012.1-.5c.9.3 1.9.6 2.9.7a2 2 0 011.7 2z"/></svg></span>
+            <div><small>Emergency hotline</small><b data-eid="con.phone">108 · +880 1700 000 000</b></div>
+          </div>
+          <div class="crow">
+            <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 6.5l8.5 6 8.5-6"/></svg></span>
+            <div><small>Email</small><b data-eid="con.mail">control@vitalis.example</b></div>
+          </div>
+          <div class="crow">
+            <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+            <div><small>Outpatient hours</small><b data-eid="con.hours">Sat–Thu 8:00–22:00 · Emergency 24/7</b></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="emerg-banner reveal">
+        <h3 data-eid="ban.title">Someone collapsing right now?</h3>
+        <p data-eid="ban.sub">Don't type. Dial. Our control room answers on the first ring, day or night.</p>
+        <div class="emerg-num" data-eid="ban.num">108</div>
+        <div style="margin-top:20px">
+          <a href="#dispatch" class="btn" style="background:#fff;color:#101720;border-color:transparent">Or book a unit online</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ========== FOOTER ========== -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a href="#home" class="brand" style="margin-bottom:14px">
+          <span class="brand-mark"><svg viewBox="0 0 24 24"><path d="M10 3h4v7h7v4h-7v7h-4v-7H3v-4h7z" fill="#fff"/></svg></span>
+          <span>Vitalis<small>Emergency Hospital</small></span>
+        </a>
+        <p style="color:var(--text-dim);font-size:.88rem;max-width:34ch" data-eid="foot.blurb">A 420-bed acute care hospital built around one idea: the fastest possible path from emergency to treatment.</p>
+      </div>
+      <div><h5>Care</h5><ul>
+        <li><a href="#dispatch">Ambulance</a></li><li><a href="#doctors">Find a doctor</a></li>
+        <li><a href="#departments">Departments</a></li><li><a href="#home">Emergency board</a></li></ul></div>
+      <div><h5>Patients</h5><ul>
+        <li><a href="#contact">Visiting hours</a></li><li><a href="#contact">Insurance</a></li>
+        <li><a href="#contact">Medical records</a></li><li><a href="#contact">Feedback</a></li></ul></div>
+      <div><h5>Hospital</h5><ul>
+        <li><a href="#home">About us</a></li><li><a href="#doctors">Careers</a></li>
+        <li><a href="#contact">Contact</a></li><li><a href="#contact">Privacy</a></li></ul></div>
+    </div>
+    <div class="foot-bot">
+      <span data-eid="foot.copy">© 2026 Vitalis Emergency Hospital. Demonstration site — not a real medical service.</span>
+      <span>Built as a single HTML file · no backend, no tracking.</span>
+    </div>
+  </div>
+</footer>
+
+<button class="icon-btn" id="toTop" title="Back to top" aria-label="Back to top">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
+<!-- ========== EDIT BAR ========== -->
+<div id="editBar">
+  <span class="tag">Editing mode</span>
+  <button class="btn btn-sm btn-ghost" id="ebSave">Save</button>
+  <button class="btn btn-sm btn-ghost" id="ebExport">Export</button>
+  <button class="btn btn-sm btn-ghost" id="ebImport">Import</button>
+  <button class="btn btn-sm btn-ghost" id="ebReset">Reset all</button>
+  <button class="btn btn-sm btn-red" id="ebExit">Done</button>
+  <input type="file" id="ebFile" accept="application/json" hidden>
+</div>
+
+<!-- ========== PIN MODAL ========== -->
+<div class="modal" id="pinModal">
+  <div class="sheet">
+    <h3>Staff editing access</h3>
+    <p>Enter the 4-digit content PIN to unlock inline editing. Everything is stored in this browser only — no server, no Firebase.</p>
+    <div class="pin" id="pinRow">
+      <input maxlength="1" inputmode="numeric" aria-label="digit 1">
+      <input maxlength="1" inputmode="numeric" aria-label="digit 2">
+      <input maxlength="1" inputmode="numeric" aria-label="digit 3">
+      <input maxlength="1" inputmode="numeric" aria-label="digit 4">
+    </div>
+    <div class="hint" id="pinHint">Default PIN is <b>1224</b> — change it from the edit bar.</div>
+    <div class="actions">
+      <button class="btn btn-ghost btn-block" id="pinCancel" type="button">Cancel</button>
+      <button class="btn btn-red btn-block" id="pinGo" type="button">Unlock</button>
+    </div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script>
+/* ================================================================
+   VITALIS — application script
+   Sections: 0 util · 1 preloader · 2 theme · 3 nav/scroll
+             4 live board · 5 seven-segment clock · 6 dispatch sim
+             7 doctors · 8 departments · 9 edit mode
+   ================================================================ */
+(function(){
+"use strict";
+
+/* ---------- 0. Utilities ---------- */
+const $  = (s,r)=> (r||document).querySelector(s);
+const $$ = (s,r)=> Array.from((r||document).querySelectorAll(s));
+const clamp = (v,a,b)=> Math.min(b,Math.max(a,v));
+const rand  = (a,b)=> a + Math.random()*(b-a);
+const randI = (a,b)=> Math.floor(rand(a,b+1));
+const pick  = a => a[randI(0,a.length-1)];
+const pad2  = n => String(Math.max(0,n|0)).padStart(2,"0");
+const REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const store = {
+  get(k,f){ try{ const v = localStorage.getItem("vitalis."+k); return v===null?f:JSON.parse(v);}catch(e){return f;} },
+  set(k,v){ try{ localStorage.setItem("vitalis."+k, JSON.stringify(v)); return true;}catch(e){return false;} },
+  del(k){ try{ localStorage.removeItem("vitalis."+k);}catch(e){} }
+};
+
+function toast(title,msg,kind){
+  const wrap = $("#toasts");
+  const colors = {ok:"var(--green)",warn:"var(--amber)",err:"var(--danger)",info:"var(--blue)"};
+  const icons  = {ok:"✓",warn:"!",err:"✕",info:"i"};
+  const c = colors[kind||"info"], i = icons[kind||"info"];
+  const el = document.createElement("div");
+  el.className = "toast";
+  el.innerHTML =
+    '<span class="ti" style="background:color-mix(in srgb,'+c+' 18%,transparent);color:'+c+'">'+i+'</span>'+
+    '<span><b></b><small></small></span>';
+  el.querySelector("b").textContent = title;
+  el.querySelector("small").textContent = msg||"";
+  wrap.appendChild(el);
+  setTimeout(()=>{ el.classList.add("out"); setTimeout(()=>el.remove(),400); }, 4600);
+}
+
+/* ---------- 1. Preloader ---------- */
+(function preloader(){
+  const word = "VITALIS";
+  const w = $("#plWord");
+  word.split("").forEach((ch,i)=>{
+    const s = document.createElement("span");
+    s.textContent = ch; s.style.animationDelay = (i*0.075+0.1)+"s";
+    w.appendChild(s);
+  });
+
+  const bar = $("#plBar"), pct = $("#plPct");
+  const phases = [
+    [18,"CHECKING VITAL LINKS"],
+    [42,"SYNCING DUTY ROSTER"],
+    [65,"LOCATING AMBULANCE UNITS"],
+    [86,"CALIBRATING TRIAGE BOARD"],
+    [100,"READY"]
+  ];
+  let p = 0, target = 0, idx = 0;
+  const step = ()=>{
+    if(idx < phases.length){
+      target = phases[idx][0];
+      if(p >= target - .5){ idx++; }
+    }
+    p += Math.max(.4,(target-p)*0.10);
+    if(p>100) p = 100;
+    bar.style.width = p.toFixed(1)+"%";
+    const label = phases[Math.min(idx,phases.length-1)][1];
+    pct.textContent = label+" · "+Math.round(p)+"%";
+    if(p < 99.6){ requestAnimationFrame(step); } else { finish(); }
+  };
+
+  let finished = false;
+  function finish(){
+    if(finished) return; finished = true;
+    bar.style.width = "100%"; pct.textContent = "READY · 100%";
+    setTimeout(()=>{
+      $("#preloader").classList.add("done");
+      const c = $("#curtain");
+      $$("#curtain i").forEach((el,i)=> el.style.transitionDelay = (i*0.07)+"s");
+      c.classList.add("lift");
+      document.body.classList.remove("locked");
+      setTimeout(()=>{ c.remove(); $("#preloader").remove(); revealAll(); }, 1200);
+    }, 360);
+  }
+
+  if(REDUCED){ setTimeout(finish,400); } else { requestAnimationFrame(step); }
+  // hard safety nets so the page can never stay stuck behind the loader
+  setTimeout(finish, 4000);                       // rAF is paused in background tabs
+  window.addEventListener("error", finish);       // a script error must not hide the site
+  window.addEventListener("load", ()=> setTimeout(finish, 1200));
+})();
+
+/* ---------- 2. Theme ---------- */
+(function theme(){
+  const saved = store.get("theme",null);
+  const sysDark = !window.matchMedia("(prefers-color-scheme: light)").matches;
+  document.documentElement.dataset.theme = saved || (sysDark?"dark":"light");
+  $("#themeBtn").addEventListener("click", ()=>{
+    const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+    document.documentElement.dataset.theme = next;
+    store.set("theme",next);
+    toast("Theme switched", next==="dark" ? "Dark mode on — easier on night-shift eyes." : "Light mode on.", "info");
+  });
+})();
+
+/* ---------- 3. Nav, scroll, reveal, counters ---------- */
+const nav = $("#nav"), navLinks = $("#navLinks");
+$("#burger").addEventListener("click", ()=> navLinks.classList.toggle("open"));
+$$("#navLinks a").forEach(a=> a.addEventListener("click", ()=> navLinks.classList.remove("open")));
+
+function onScroll(){
+  const y = window.scrollY;
+  nav.classList.toggle("scrolled", y > 20);
+  $("#toTop").classList.toggle("on", y > 700);
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  $("#progress").style.width = (h>0 ? (y/h)*100 : 0) + "%";
+  let cur = "";
+  $$("main section[id]").forEach(sec=>{
+    if(y >= sec.offsetTop - 140) cur = sec.id;
+  });
+  $$("#navLinks a").forEach(a=> a.classList.toggle("active", a.getAttribute("href") === "#"+cur));
+}
+window.addEventListener("scroll", onScroll, {passive:true});
+onScroll();
+$("#toTop").addEventListener("click", ()=> window.scrollTo({top:0,behavior:REDUCED?"auto":"smooth"}));
+
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add("in");
+      io.unobserve(e.target);
+      $$(".count", e.target).forEach(runCounter);
+    }
+  });
+},{threshold:.14, rootMargin:"0px 0px -40px 0px"});
+
+function revealAll(){ $$(".reveal").forEach((el,i)=>{ el.style.transitionDelay = ((i%4)*0.07)+"s"; io.observe(el); }); }
+
+function runCounter(el){
+  if(el.dataset.done) return; el.dataset.done = "1";
+  const to = parseFloat(el.dataset.to), dec = parseInt(el.dataset.dec||"0",10);
+  const dur = 1500, t0 = performance.now();
+  const tick = t=>{
+    const k = clamp((t-t0)/dur,0,1);
+    const e = 1 - Math.pow(1-k,3);
+    el.textContent = (to*e).toFixed(dec);
+    if(k<1) requestAnimationFrame(tick); else el.textContent = to.toFixed(dec);
+  };
+  requestAnimationFrame(tick);
+}
+
+/* ---------- 4. Live ER board ---------- */
+(function board(){
+  const wave = $("#wave");
+  for(let i=0;i<24;i++){
+    const b = document.createElement("i");
+    b.style.height = randI(18,100)+"%";
+    wave.appendChild(b);
+  }
+  const set = (id,v)=>{ const el=$(id); if(el) el.textContent = v; };
+  function jitter(){
+    const wait = randI(4,11), beds = randI(6,22), icu = randI(58,88), amb = randI(5,13);
+    set("#bWait",wait); set("#bBeds",beds); set("#bIcu",icu); set("#bAmb",amb);
+    $("#mWait").style.width = clamp(wait/20*100,8,100)+"%";
+    $("#mWait").style.background = wait>8 ? "var(--amber)" : "var(--green)";
+    $("#mBeds").style.width = (beds/40*100)+"%";
+    $("#mIcu").style.width  = icu+"%";
+    $("#mIcu").style.background = icu>82 ? "var(--danger)" : "var(--amber)";
+    $("#mAmb").style.width  = clamp(amb/15*100,8,100)+"%";
+    $$("#wave i").forEach(b=>{ if(Math.random()<.35) b.style.height = randI(18,100)+"%"; });
+  }
+  jitter(); setInterval(jitter, 4200);
+})();
+
+/* ---------- 5. Seven-segment display ---------- */
+/* Segment geometry, drawn on a 100 x 180 grid — chunky bevelled bars
+   exactly like a classic LED clock module.                          */
+const SEG = (function(){
+  const T = 20, h = T/2;
+  const hbar = (x1,x2,yc)=>[[x1,yc],[x1+h,yc-h],[x2-h,yc-h],[x2,yc],[x2-h,yc+h],[x1+h,yc+h]];
+  const vbar = (xc,y1,y2)=>[[xc,y1],[xc+h,y1+h],[xc+h,y2-h],[xc,y2],[xc-h,y2-h],[xc-h,y1+h]];
+  return {
+    a: hbar(14,86,16),
+    b: vbar(86,20,86),
+    c: vbar(86,94,160),
+    d: hbar(14,86,164),
+    e: vbar(14,94,160),
+    f: vbar(14,20,86),
+    g: hbar(14,86,90)
+  };
+})();
+const GLYPH = {
+  "0":"abcdef","1":"bc","2":"abged","3":"abgcd","4":"fgbc","5":"afgcd",
+  "6":"afgedc","7":"abc","8":"abcdefg","9":"abfgcd","-":"g"," ":""
+};
+
+function makeDigit(){
+  const ns = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(ns,"svg");
+  svg.setAttribute("viewBox","0 0 100 180");
+  svg.setAttribute("class","seg-digit");
+  svg.dataset.role = "digit";
+  Object.keys(SEG).forEach(k=>{
+    const p = document.createElementNS(ns,"polygon");
+    p.setAttribute("points", SEG[k].map(pt=>pt.join(",")).join(" "));
+    p.setAttribute("class","seg-off");
+    p.dataset.seg = k;
+    svg.appendChild(p);
+  });
+  return svg;
+}
+function setDigit(svg,ch){
+  const on = GLYPH[ch] || "";
+  $$("polygon",svg).forEach(p=>{
+    p.setAttribute("class", on.indexOf(p.dataset.seg) > -1 ? "seg-on" : "seg-off");
+  });
+}
+
+const clockFace = $("#clockFace");
+const digits = [];
+let colonEl = null;
+(function buildClock(){
+  const d1 = makeDigit(), d2 = makeDigit(), d3 = makeDigit(), d4 = makeDigit();
+  colonEl = document.createElement("div");
+  colonEl.className = "seg-colon";
+  colonEl.innerHTML = "<i></i><i></i>";
+  clockFace.append(d1,d2,colonEl,d3,d4);
+  digits.push(d1,d2,d3,d4);
+  renderClock(0);
+})();
+
+function renderClock(totalSeconds){
+  const s = Math.max(0, Math.round(totalSeconds));
+  const mm = pad2(Math.floor(s/60)), ss = pad2(s%60);
+  setDigit(digits[0], mm[0]); setDigit(digits[1], mm[1]);
+  setDigit(digits[2], ss[0]); setDigit(digits[3], ss[1]);
+  clockFace.setAttribute("aria-label","Estimated arrival in "+mm+" minutes "+ss+" seconds");
+}
+
+/* ---------- 6. Dispatch simulation ---------- */
+const form      = $("#ambForm");
+const trackPane = $("#trackPanel");
+const idlePane  = $("#idlePanel");
+const routeEl   = $("#route");
+const doneEl    = $("#routeDone");
+const ambPin    = $("#ambPin");
+const clockShell= $("#clockShell");
+
+const MEDICS  = ["Sabina Yasmin, EMT-P","Tanvir Hasan, EMT-P","Nusrat Jahan, CCP","Imran Kabir, EMT-P","Farhana Akter, CCP"];
+const DRIVERS = ["Md. Jalal","Rakib Sarkar","Anwar Hossain","Shafiq Mia","Babul Rahman"];
+const STREETS = ["Leaving Vitalis bay","On Banani Road 11","Crossing Kemal Ataturk Ave","Onto Airport Road","Passing Mohakhali flyover","Entering Gulshan Link Rd","On your street now","Pulling up outside"];
+
+let sim = null;                    // active simulation state
+let simSpeed = 4;                  // demo acceleration factor
+const routeLen = routeEl.getTotalLength();
+doneEl.style.strokeDasharray = routeLen;
+doneEl.style.strokeDashoffset = routeLen;
+
+// build the map's decorative city grid once
+(function buildCity(){
+  const ns = "http://www.w3.org/2000/svg";
+  const blocks = $("#blocks"), roads = $("#roads"), lines = $("#roadLines");
+  const seedRects = [
+    [30,40,120,70],[170,30,150,60],[350,55,110,55],[490,25,120,60],[640,45,130,55],
+    [40,140,110,80],[180,150,120,70],[350,130,140,60],[520,150,110,70],[660,140,110,80],
+    [30,260,140,70],[200,250,110,80],[340,270,120,60],[490,260,130,70],[650,255,120,80],
+    [50,360,120,70],[200,370,130,60],[360,355,120,75],[520,365,110,65],[660,360,110,70]
+  ];
+  seedRects.forEach(r=>{
+    const el = document.createElementNS(ns,"rect");
+    el.setAttribute("x",r[0]); el.setAttribute("y",r[1]);
+    el.setAttribute("width",r[2]); el.setAttribute("height",r[3]);
+    el.setAttribute("rx",7); el.setAttribute("opacity", (0.55+Math.random()*0.45).toFixed(2));
+    blocks.appendChild(el);
+  });
+  const hs = [122,236,346,442], vs = [160,330,478,628];
+  hs.forEach(y=>{
+    const p = document.createElementNS(ns,"path");
+    p.setAttribute("d","M10 "+y+" H790"); roads.appendChild(p);
+    const l = document.createElementNS(ns,"path");
+    l.setAttribute("d","M10 "+y+" H790"); lines.appendChild(l);
+  });
+  vs.forEach(x=>{
+    const p = document.createElementNS(ns,"path");
+    p.setAttribute("d","M"+x+" 10 V450"); roads.appendChild(p);
+    const l = document.createElementNS(ns,"path");
+    l.setAttribute("d","M"+x+" 10 V450"); lines.appendChild(l);
+  });
+})();
+
+function placeAmbulance(progress){
+  const len = clamp(progress,0,1)*routeLen;
+  const p  = routeEl.getPointAtLength(len);
+  const p2 = routeEl.getPointAtLength(clamp(len+2,0,routeLen));
+  const ang = Math.atan2(p2.y-p.y, p2.x-p.x) * 180/Math.PI;
+  ambPin.setAttribute("transform","translate("+p.x.toFixed(2)+","+p.y.toFixed(2)+") rotate("+ang.toFixed(2)+")");
+  doneEl.style.strokeDashoffset = (routeLen - len).toFixed(2);
+}
+placeAmbulance(0);
+
+function markField(f,bad){ f.classList.toggle("invalid", !!bad); }
+
+function validate(){
+  let ok = true;
+  const name = $("#pName"), phone = $("#pPhone"), addr = $("#pAddr"), consent = $("#pConsent");
+  const nf = name.closest(".field"), pf = phone.closest(".field"), af = addr.closest(".field");
+
+  markField(nf, name.value.trim().length < 2); if(name.value.trim().length < 2) ok = false;
+  const digitsOnly = phone.value.replace(/\D/g,"");
+  markField(pf, digitsOnly.length < 7); if(digitsOnly.length < 7) ok = false;
+  markField(af, addr.value.trim().length < 4); if(addr.value.trim().length < 4) ok = false;
+  $("#consentErr").style.display = consent.checked ? "none" : "block";
+  if(!consent.checked) ok = false;
+  return ok;
+}
+$$("#ambForm .control").forEach(c=> c.addEventListener("input", ()=>{
+  const f = c.closest(".field"); if(f && f.classList.contains("invalid")) markField(f,false);
+}));
+$("#pConsent").addEventListener("change", ()=>{ if($("#pConsent").checked) $("#consentErr").style.display="none"; });
+
+$("#gpsBtn").addEventListener("click", ()=>{
+  const btn = $("#gpsBtn");
+  if(!navigator.geolocation){ toast("GPS unavailable","This browser doesn't expose location. Type the address instead.","warn"); return; }
+  btn.textContent = "Locating…";
+  navigator.geolocation.getCurrentPosition(
+    pos=>{
+      const {latitude:la, longitude:lo, accuracy:ac} = pos.coords;
+      $("#pAddr").value = "GPS "+la.toFixed(5)+", "+lo.toFixed(5)+" (±"+Math.round(ac)+"m)";
+      markField($("#pAddr").closest(".field"), false);
+      btn.innerHTML = "Located ✓";
+      toast("Location captured","Coordinates pinned to ±"+Math.round(ac)+" metres.","ok");
+      setTimeout(()=>{ btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.7 7-11a7 7 0 10-14 0c0 5.3 7 11 7 11z"></path><circle cx="12" cy="10" r="2.6"></circle></svg> Use GPS'; }, 2600);
+    },
+    ()=>{ btn.textContent = "Use GPS"; toast("Permission denied","Location blocked — please type the pickup address.","warn"); },
+    {enableHighAccuracy:true, timeout:9000}
+  );
+});
+
+form.addEventListener("submit", e=>{
+  e.preventDefault();
+  if(!validate()){ toast("Check the form","Some required details are missing.","err"); return; }
+
+  const btn = $("#submitBtn"), label = $("#submitLabel");
+  btn.disabled = true;
+  label.previousElementSibling.style.display = "none";
+  const sp = document.createElement("span"); sp.className = "spinner";
+  btn.insertBefore(sp, label);
+  const seq = ["Locating nearest unit…","Checking crew availability…","Assigning AMB unit…"];
+  let i = 0; label.textContent = seq[0];
+  const t = setInterval(()=>{ i++; if(i<seq.length) label.textContent = seq[i]; }, 620);
+
+  setTimeout(()=>{
+    clearInterval(t);
+    sp.remove(); label.previousElementSibling.style.display = "";
+    label.textContent = "Dispatch nearest ambulance";
+    btn.disabled = false;
+    startDispatch();
+  }, 1950);
+});
+
+function startDispatch(){
+  const sev  = ($("input[name=sev]:checked")||{}).value || "Critical";
+  const type = $("#pType").value;
+  const name = $("#pName").value.trim();
+  const addr = $("#pAddr").value.trim();
+
+  // ETA derived from severity: critical cases get the closest unit + priority route
+  const base = sev==="Critical" ? rand(210,330) : sev==="Serious" ? rand(320,470) : rand(460,660);
+  const total = Math.round(base);
+  const km = +(total/60 * rand(0.55,0.85)).toFixed(1);
+
+  sim = {
+    total, left: total, km, kmLeft: km,
+    startedAt: Date.now(), arrived:false, cancelled:false,
+    unit: "AMB‑"+pad2(randI(1,24)),
+    kind: sev==="Stable" ? "Basic Life Support" : "Advanced Life Support"
+  };
+
+  $("#unitId").textContent   = sim.unit + " · " + sim.kind;
+  $("#unitStatus").textContent = "Dispatched — priority "+sev.toLowerCase()+" · "+type;
+  $("#crewMedic").textContent  = pick(MEDICS);
+  $("#crewDriver").textContent = pick(DRIVERS);
+  $("#crewPatient").textContent= name + " · " + $("#pCount").value + " pt";
+  $("#crewCase").textContent   = type + " (" + sev + ")";
+  $("#mDist").textContent = km.toFixed(1);
+  $("#clockLabel").textContent = "Estimated arrival";
+  clockShell.classList.remove("arrived");
+  $("#mapStreet").textContent = STREETS[0];
+
+  idlePane.classList.add("off");
+  trackPane.classList.add("on");
+  setSteps(1);
+  renderClock(total);
+  placeAmbulance(0);
+
+  toast("Unit dispatched", sim.unit+" is on the way to "+(addr.length>28?addr.slice(0,28)+"…":addr)+".", "ok");
+  setTimeout(()=> trackPane.scrollIntoView({behavior:REDUCED?"auto":"smooth", block:"center"}), 120);
+
+  clearInterval(window.__simTimer);
+  window.__simTimer = setInterval(tickSim, 250);
+  setTimeout(()=> setSteps(2), 1400);
+}
+
+function setSteps(n){
+  $$("#timeline .step").forEach((s,i)=>{
+    s.classList.toggle("done", i < n);
+    s.classList.toggle("now", i === n-1);
+  });
+}
+
+function tickSim(){
+  if(!sim || sim.arrived || sim.cancelled) return;
+  sim.left -= 0.25 * simSpeed;
+  if(sim.left <= 0){ sim.left = 0; arrive(); return; }   // arrive() owns the final frame
+
+  const prog = 1 - (sim.left / sim.total);
+  renderClock(sim.left);
+  placeAmbulance(prog);
+
+  sim.kmLeft = +(sim.km * (1-prog)).toFixed(1);
+  $("#mDist").textContent = sim.kmLeft.toFixed(1);
+  $("#mSpeed").textContent = Math.round(clamp(38 + Math.sin(Date.now()/900)*14 + rand(-4,4), 18, 78));
+
+  const eta = new Date(Date.now() + sim.left*1000);
+  $("#mEta").textContent = pad2(eta.getHours())+":"+pad2(eta.getMinutes());
+
+  const si = clamp(Math.floor(prog * STREETS.length), 0, STREETS.length-1);
+  if($("#mapStreet").textContent !== STREETS[si]) $("#mapStreet").textContent = STREETS[si];
+
+  colonEl.classList.toggle("dim", Math.floor(Date.now()/500) % 2 === 1);
+
+  if(prog > 0.30) setSteps(3);
+  if(prog > 0.86 && !sim.nearToast){
+    sim.nearToast = true;
+    $("#unitStatus").textContent = "Arriving now — please clear the entrance";
+    toast("Almost there", sim.unit+" is under a minute away. Unlock the door and clear the path.", "warn");
+  }
+}
+
+function arrive(){
+  sim.arrived = true;
+  clearInterval(window.__simTimer);
+  renderClock(0);
+  placeAmbulance(1);
+  setSteps(4);
+  clockShell.classList.add("arrived");
+  $("#clockLabel").textContent = "Ambulance has arrived";
+  $("#unitStatus").textContent = "Arrived at pickup point";
+  $("#mapStreet").textContent = "At your location";
+  $("#mDist").textContent = "0.0";
+  colonEl.classList.remove("dim");
+  toast("Ambulance arrived", sim.unit+" is at your location. The crew is coming to you now.", "ok");
+}
+
+$$(".spd").forEach(b=> b.addEventListener("click", ()=>{
+  $$(".spd").forEach(x=>x.classList.remove("on"));
+  b.classList.add("on");
+  simSpeed = +b.dataset.spd;
+}));
+
+$("#cancelBtn").addEventListener("click", ()=>{
+  if(!sim) return;
+  clearInterval(window.__simTimer);
+  sim.cancelled = true;
+  trackPane.classList.remove("on");
+  idlePane.classList.remove("off");
+  toast("Dispatch cancelled","The unit has been released back to the standby pool.","warn");
+});
+
+$("#shareBtn").addEventListener("click", ()=>{
+  if(!sim) return;
+  const txt = sim.unit+" · "+sim.kind+"\nPatient: "+$("#crewPatient").textContent+
+              "\nCase: "+$("#crewCase").textContent+
+              "\nETA: "+pad2(Math.floor(sim.left/60))+":"+pad2(Math.round(sim.left%60))+
+              " ("+sim.kmLeft.toFixed(1)+" km away)"+
+              "\nCrew: "+$("#crewMedic").textContent+" / "+$("#crewDriver").textContent;
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt)
+      .then(()=> toast("Copied","Tracking summary is on your clipboard — paste it to family.","ok"))
+      .catch(()=> toast("Couldn't copy","Your browser blocked clipboard access.","err"));
+  } else { toast("Not supported","Clipboard API unavailable in this browser.","warn"); }
+});
+
+/* ---------- 7. Doctors ---------- */
+const DEFAULT_DOCS = [
+  {id:"d1", name:"Dr. Ayesha Rahman",  spec:"Emergency Medicine", ward:"Resus Bay A", exp:"14 yrs", resp:"2 min", color:"#2fbf87", status:"available"},
+  {id:"d2", name:"Dr. Imran Chowdhury",spec:"Cardiology",         ward:"Cath Lab 2",  exp:"18 yrs", resp:"4 min", color:"#0ea472", status:"surgery"},
+  {id:"d3", name:"Dr. Farhana Karim",  spec:"Trauma Surgery",     ward:"OT 4",        exp:"11 yrs", resp:"3 min", color:"#f97316", status:"available"},
+  {id:"d4", name:"Dr. Nayeem Hossain", spec:"Neurology",          ward:"Stroke Unit", exp:"9 yrs",  resp:"5 min", color:"#8b5cf6", status:"oncall"},
+  {id:"d5", name:"Dr. Sanjida Alam",   spec:"Paediatrics",        ward:"Paeds ER",    exp:"12 yrs", resp:"3 min", color:"#3b82f6", status:"available"},
+  {id:"d6", name:"Dr. Tanjim Islam",   spec:"Orthopaedics",       ward:"Ward 6",      exp:"15 yrs", resp:"6 min", color:"#0ea5e9", status:"available"},
+  {id:"d7", name:"Dr. Rubaiya Noor",   spec:"Obstetrics",         ward:"Labour Rm 1", exp:"13 yrs", resp:"4 min", color:"#ec4899", status:"surgery"},
+  {id:"d8", name:"Dr. Mahfuz Anwar",   spec:"Anaesthesiology",    ward:"OT Complex",  exp:"16 yrs", resp:"2 min", color:"#14b8a6", status:"available"},
+  {id:"d9", name:"Dr. Shreya Das",     spec:"Critical Care",      ward:"ICU 3",       exp:"10 yrs", resp:"3 min", color:"#22a1a1", status:"oncall"},
+  {id:"d10",name:"Dr. Kamrul Hasan",   spec:"Burns & Plastics",   ward:"Burn Unit",   exp:"8 yrs",  resp:"7 min", color:"#ffb020", status:"off"},
+  {id:"d11",name:"Dr. Lubna Ferdous",  spec:"Emergency Medicine", ward:"Resus Bay B", exp:"7 yrs",  resp:"2 min", color:"#5bbf6a", status:"available"},
+  {id:"d12",name:"Dr. Arif Mahmud",    spec:"Radiology",          ward:"CT / MRI",    exp:"12 yrs", resp:"5 min", color:"#64748b", status:"available"}
+];
+const ST_LABEL = {available:"Available now", oncall:"On call", surgery:"In surgery", off:"Off duty"};
+const ST_CLASS = {available:"st-available", oncall:"st-oncall", surgery:"st-surgery", off:"st-off"};
+
+let DOCS = store.get("doctors", null) || DEFAULT_DOCS.map(d=>Object.assign({},d));
+let docFilter = "All", docQuery = "";
+
+function saveDocs(){ store.set("doctors", DOCS); }
+
+function initials(n){
+  return n.replace(/^Dr\.?\s*/i,"").split(/\s+/).slice(0,2).map(w=>w[0]||"").join("").toUpperCase();
+}
+
+function buildFilters(){
+  const specs = ["All"].concat(Array.from(new Set(DOCS.map(d=>d.spec))).sort());
+  const wrap = $("#docFilters"); wrap.innerHTML = "";
+  specs.forEach(s=>{
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "fchip"+(s===docFilter?" on":"");
+    b.textContent = s;
+    b.addEventListener("click", ()=>{ docFilter = s; buildFilters(); renderDocs(); });
+    wrap.appendChild(b);
+  });
+}
+
+function renderDocs(){
+  const grid = $("#docGrid");
+  const q = docQuery.toLowerCase();
+  const list = DOCS.filter(d=>{
+    const okF = docFilter === "All" || d.spec === docFilter;
+    const okQ = !q || (d.name+" "+d.spec+" "+d.ward).toLowerCase().indexOf(q) > -1;
+    return okF && okQ;
+  });
+
+  grid.innerHTML = "";
+  if(!list.length){
+    const e = document.createElement("div");
+    e.className = "empty"; e.style.gridColumn = "1/-1";
+    e.textContent = "No doctors match that search.";
+    grid.appendChild(e);
+  }
+
+  list.forEach(d=>{
+    const el = document.createElement("article");
+    el.className = "doc"; el.style.setProperty("--dc", d.color);
+    el.innerHTML =
+      '<button class="doc-del" title="Remove" type="button">×</button>'+
+      '<div class="doc-top">'+
+        '<div class="avatar"><span class="ring"></span><span></span></div>'+
+        '<div><div class="doc-name" data-eid="doc.'+d.id+'.name"></div>'+
+        '<div class="doc-spec" data-eid="doc.'+d.id+'.spec"></div></div>'+
+      '</div>'+
+      '<div class="doc-meta">'+
+        '<span class="mchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/></svg><span data-eid="doc.'+d.id+'.ward"></span></span>'+
+        '<span class="mchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span></span> response</span>'+
+        '<span class="mchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.6 6.1.8-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6L3.3 9.4l6.1-.8z"/></svg><span></span> experience</span>'+
+      '</div>'+
+      '<div class="status '+ST_CLASS[d.status]+'"><span class="d"></span><span class="stx"></span></div>'+
+      '<div class="doc-actions">'+
+        '<button class="btn btn-sm btn-red" type="button">Request now</button>'+
+        '<button class="btn btn-sm btn-ghost" type="button">Profile</button>'+
+      '</div>';
+
+    el.querySelector(".avatar span:last-child").textContent = initials(d.name);
+    el.querySelector(".doc-name").textContent = d.name;
+    el.querySelector(".doc-spec").textContent = d.spec;
+    el.querySelectorAll(".mchip")[0].querySelector("span").textContent = d.ward;
+    el.querySelectorAll(".mchip")[1].querySelector("span").textContent = d.resp;
+    el.querySelectorAll(".mchip")[2].querySelector("span").textContent = d.exp;
+    el.querySelector(".stx").textContent = ST_LABEL[d.status];
+
+    const btns = el.querySelectorAll(".doc-actions .btn");
+    btns[0].disabled = (d.status === "off");
+    btns[0].addEventListener("click", ()=>{
+      if(d.status === "available") toast("Consultant paged", d.name+" acknowledged — heading to the resus bay ("+d.resp+").","ok");
+      else if(d.status === "oncall") toast("On-call alerted", d.name+" has been paged and will confirm shortly.","info");
+      else toast("Currently in theatre", d.name+" is operating. The next available consultant was notified instead.","warn");
+    });
+    btns[1].addEventListener("click", ()=> toast(d.name, d.spec+" · "+d.ward+" · "+d.exp+" experience · typical response "+d.resp+".","info"));
+
+    el.querySelector(".doc-del").addEventListener("click", ()=>{
+      DOCS = DOCS.filter(x=>x.id !== d.id);
+      saveDocs(); buildFilters(); renderDocs();
+      toast("Doctor removed", d.name+" was taken off the roster.","warn");
+    });
+
+    grid.appendChild(el);
+  });
+
+  // "add" tile is only visible in editing mode (CSS-gated)
+  const add = document.createElement("button");
+  add.type = "button"; add.className = "doc-add";
+  add.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span>Add a doctor</span>';
+  add.addEventListener("click", addDoctor);
+  grid.appendChild(add);
+
+  updateAvail();
+  applyEdits();
+  if(document.body.classList.contains("editing")) enableEditing(true);
+}
+
+function addDoctor(){
+  const name = prompt("Doctor's full name","Dr. ");
+  if(!name) return;
+  const spec = prompt("Specialty","Emergency Medicine") || "General";
+  const ward = prompt("Ward / location","Resus Bay A") || "Ward";
+  DOCS.push({
+    id:"d"+Date.now(), name:name.trim(), spec:spec.trim(), ward:ward.trim(),
+    exp:randI(4,22)+" yrs", resp:randI(2,8)+" min",
+    color:pick(["#2fbf87","#3b82f6","#8b5cf6","#18c07a","#ffb020","#ec4899","#0ea5e9","#14b8a6"]),
+    status:"available"
+  });
+  saveDocs(); buildFilters(); renderDocs();
+  toast("Doctor added", name+" is now on the active roster.","ok");
+}
+
+function updateAvail(){
+  $("#availCount").textContent = DOCS.filter(d=>d.status==="available").length;
+  $("#totalCount").textContent = DOCS.length;
+}
+
+$("#docSearch").addEventListener("input", e=>{ docQuery = e.target.value.trim(); renderDocs(); });
+
+// duty board churn — a couple of statuses shift every few seconds
+setInterval(()=>{
+  if(document.body.classList.contains("editing")) return;
+  if(!DOCS.length) return;
+  const d = pick(DOCS);
+  const ladder = ["available","oncall","surgery","available","available","off"];
+  const next = pick(ladder);
+  if(next !== d.status){
+    d.status = next;
+    renderDocs();
+  }
+}, 7000);
+
+/* ---------- 8. Departments ---------- */
+const DEPTS = [
+  {t:"Emergency & Trauma", d:"Round-the-clock resuscitation bays, rapid CT and a dedicated trauma team on 90-second activation.", tag:"24/7 · Level 1", c:"#2fbf87",
+   i:'<path d="M10 3h4v7h7v4h-7v7h-4v-7H3v-4h7z"/>'},
+  {t:"Cardiac Sciences", d:"Primary angioplasty within the golden hour, plus a permanently primed catheterisation laboratory.", tag:"Door-to-balloon 38 min", c:"#0ea472",
+   i:'<path d="M20.8 5.6a5 5 0 00-7.1 0L12 7.3l-1.7-1.7a5 5 0 10-7.1 7.1L12 21.5l8.8-8.8a5 5 0 000-7.1z"/>'},
+  {t:"Neurosciences", d:"Stroke thrombolysis pathway, neuro-ICU beds and 24-hour interventional neuroradiology.", tag:"Stroke alert ready", c:"#8b5cf6",
+   i:'<path d="M9.5 3A3.5 3.5 0 006 6.5 3 3 0 004 9.4a3 3 0 001.6 2.7A3.2 3.2 0 007 18a3 3 0 002.5 3V3z"/><path d="M14.5 3A3.5 3.5 0 0118 6.5a3 3 0 012 2.9 3 3 0 01-1.6 2.7A3.2 3.2 0 0117 18a3 3 0 01-2.5 3V3z"/>'},
+  {t:"Critical Care", d:"Forty ICU and HDU beds with 1:1 nursing, ECMO capability and continuous tele-monitoring.", tag:"40 ICU beds", c:"#22a1a1",
+   i:'<path d="M2 12h4l2-6 4 12 3-9 2 3h5"/>'},
+  {t:"Mother & Child", d:"Obstetric emergency theatre, level-3 NICU and paediatric resuscitation on the same floor.", tag:"NICU level 3", c:"#ec4899",
+   i:'<circle cx="12" cy="7" r="3.4"/><path d="M5 21a7 7 0 0114 0"/>'},
+  {t:"Orthopaedics", d:"Fracture clinic, joint replacement and same-day imaging for sports and road-traffic injuries.", tag:"Same-day imaging", c:"#0ea5e9",
+   i:'<path d="M7 4a2.5 2.5 0 00-2 4 2.5 2.5 0 000 4l7 7a2.5 2.5 0 004 0 2.5 2.5 0 004-2l-6-6"/>'},
+  {t:"Diagnostics", d:"128-slice CT, 3T MRI, digital X-ray and a full pathology lab reporting inside sixty minutes.", tag:"Reports in 60 min", c:"#3b82f6",
+   i:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/>'},
+  {t:"Burns & Plastics", d:"Isolated burns unit with laminar-flow theatre, grafting and long-term reconstruction.", tag:"Isolation unit", c:"#ffb020",
+   i:'<path d="M12 3s5 5 5 9a5 5 0 01-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3 1-6 1-8z"/>'},
+  {t:"Blood Bank", d:"On-site component separation with an eleven-minute average cross-match turnaround.", tag:"All groups stocked", c:"#14b8a6",
+   i:'<path d="M12 3s6 6.5 6 10.5A6 6 0 016 13.5C6 9.5 12 3 12 3z"/>'}
+];
+(function depts(){
+  const g = $("#deptGrid");
+  DEPTS.forEach((d,i)=>{
+    const el = document.createElement("article");
+    el.className = "dept reveal"; el.style.setProperty("--dc", d.c);
+    el.innerHTML =
+      '<div class="dico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">'+d.i+'</svg></div>'+
+      '<h4 data-eid="dept.'+i+'.t"></h4><p data-eid="dept.'+i+'.d"></p><div class="tag" data-eid="dept.'+i+'.tag"></div>';
+    el.querySelector("h4").textContent = d.t;
+    el.querySelector("p").textContent  = d.d;
+    el.querySelector(".tag").textContent = d.tag;
+    g.appendChild(el);
+  });
+})();
+
+/* ---------- 9. Editing access (localStorage, no backend) ---------- */
+const CONTENT_KEY = "content";
+let content = store.get(CONTENT_KEY, {});
+let pinValue = store.get("pin", "1224");
+
+function applyEdits(){
+  Object.keys(content).forEach(id=>{
+    const el = document.querySelector('[data-eid="'+CSS.escape(id)+'"]');
+    if(el && el.innerHTML !== content[id]) el.innerHTML = content[id];
+  });
+}
+
+function enableEditing(on){
+  $$("[data-eid]").forEach(el=>{
+    el.contentEditable = on ? "true" : "false";
+    el.spellcheck = false;
+    if(on && !el.dataset.bound){
+      el.dataset.bound = "1";
+      el.addEventListener("input", ()=>{
+        content[el.dataset.eid] = el.innerHTML;
+        clearTimeout(window.__saveT);
+        window.__saveT = setTimeout(()=> store.set(CONTENT_KEY, content), 500);
+      });
+      el.addEventListener("keydown", e=>{
+        if(e.key === "Enter" && !e.shiftKey && el.tagName !== "P" && el.tagName !== "DIV"){
+          e.preventDefault(); el.blur();
+        }
+      });
+      el.addEventListener("paste", e=>{        // keep pasted content plain
+        e.preventDefault();
+        const txt = (e.clipboardData||window.clipboardData).getData("text");
+        document.execCommand("insertText", false, txt);
+      });
+    }
+  });
+}
+
+function setEditing(on){
+  document.body.classList.toggle("editing", on);
+  $("#editBar").classList.toggle("on", on);
+  enableEditing(on);
+  if(on) toast("Editing unlocked","Click any headline, paragraph or doctor card to rewrite it. Changes save to this browser.","ok");
+}
+
+/* PIN modal */
+const pinModal = $("#pinModal"), pinInputs = $$("#pinRow input");
+function openPin(){
+  pinModal.classList.add("on");
+  pinInputs.forEach(i=> i.value = "");
+  $("#pinHint").innerHTML = (store.get("pin",null) ? "Enter your staff PIN." : "Default PIN is <b>1224</b> — change it from the edit bar.");
+  setTimeout(()=> pinInputs[0].focus(), 220);
+}
+function closePin(){ pinModal.classList.remove("on"); }
+
+pinInputs.forEach((inp,i)=>{
+  inp.addEventListener("input", ()=>{
+    inp.value = inp.value.replace(/\D/g,"").slice(0,1);
+    if(inp.value && i < pinInputs.length-1) pinInputs[i+1].focus();
+    if(i === pinInputs.length-1 && inp.value) tryPin();
+  });
+  inp.addEventListener("keydown", e=>{
+    if(e.key === "Backspace" && !inp.value && i>0) pinInputs[i-1].focus();
+    if(e.key === "Enter") tryPin();
+  });
+});
+function tryPin(){
+  const entered = pinInputs.map(i=>i.value).join("");
+  if(entered.length < 4) return;
+  if(entered === String(pinValue)){
+    closePin(); setEditing(true);
+  } else {
+    const sheet = $("#pinModal .sheet");
+    sheet.style.animation = "none"; void sheet.offsetWidth;
+    sheet.animate(
+      [{transform:"translateX(0)"},{transform:"translateX(-11px)"},{transform:"translateX(11px)"},{transform:"translateX(0)"}],
+      {duration:320,easing:"ease-in-out"}
+    );
+    pinInputs.forEach(i=>i.value=""); pinInputs[0].focus();
+    toast("Wrong PIN","That code doesn't match the staff PIN for this browser.","err");
+  }
+}
+$("#pinGo").addEventListener("click", tryPin);
+$("#pinCancel").addEventListener("click", closePin);
+pinModal.addEventListener("click", e=>{ if(e.target === pinModal) closePin(); });
+document.addEventListener("keydown", e=>{ if(e.key === "Escape"){ closePin(); navLinks.classList.remove("open"); } });
+
+$("#editBtn").addEventListener("click", ()=>{
+  if(document.body.classList.contains("editing")) setEditing(false);
+  else openPin();
+});
+
+/* edit bar actions */
+$("#ebSave").addEventListener("click", ()=>{
+  store.set(CONTENT_KEY, content); saveDocs();
+  toast("Saved", Object.keys(content).length+" edited blocks and "+DOCS.length+" doctors stored locally.","ok");
+});
+$("#ebExit").addEventListener("click", ()=>{
+  store.set(CONTENT_KEY, content); saveDocs(); setEditing(false);
+  toast("Editing closed","Your changes are live for anyone using this browser.","info");
+});
+$("#ebExport").addEventListener("click", ()=>{
+  const blob = new Blob([JSON.stringify({content, doctors:DOCS, pin:pinValue}, null, 2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "vitalis-content.json";
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1500);
+  toast("Exported","Keep vitalis-content.json to move edits to another machine.","ok");
+});
+$("#ebImport").addEventListener("click", ()=> $("#ebFile").click());
+$("#ebFile").addEventListener("change", e=>{
+  const f = e.target.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = ()=>{
+    try{
+      const data = JSON.parse(r.result);
+      if(data.content){ content = data.content; store.set(CONTENT_KEY, content); }
+      if(Array.isArray(data.doctors)){ DOCS = data.doctors; saveDocs(); }
+      if(data.pin){ pinValue = data.pin; store.set("pin", pinValue); }
+      buildFilters(); renderDocs(); applyEdits();
+      toast("Imported","Content restored from file.","ok");
+    }catch(err){ toast("Bad file","That JSON couldn't be read.","err"); }
+  };
+  r.readAsText(f);
+  e.target.value = "";
+});
+$("#ebReset").addEventListener("click", ()=>{
+  if(!confirm("Reset all text edits and the doctor roster back to defaults?")) return;
+  content = {}; store.del(CONTENT_KEY);
+  DOCS = DEFAULT_DOCS.map(d=>Object.assign({},d)); saveDocs();
+  buildFilters(); renderDocs();
+  location.reload();
+});
+// long-press "Editing mode" tag to change the PIN
+$("#editBar .tag").addEventListener("dblclick", ()=>{
+  const np = prompt("Set a new 4-digit staff PIN", String(pinValue));
+  if(np && /^\d{4}$/.test(np)){ pinValue = np; store.set("pin", np); toast("PIN updated","New staff PIN saved to this browser.","ok"); }
+  else if(np) toast("Invalid PIN","Use exactly four digits.","err");
+});
+
+/* ---------- boot ---------- */
+buildFilters();
+renderDocs();
+applyEdits();
+window.addEventListener("resize", ()=>{ if(sim) placeAmbulance(1 - sim.left/sim.total); });
+
+})();
+</script>
+</body>
+</html>

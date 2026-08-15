@@ -1,0 +1,122 @@
+/* ═══════════════════════════════════════════════════════════
+   Seven-segment countdown display
+   Built from divs + clip-path — no images, no fonts.
+   Markup produced by assets/js/clock.js:
+     .clock > .clock__digits > (.digit > i.seg.seg--a … .seg--g | .colon)
+   ═══════════════════════════════════════════════════════════ */
+
+.clock {
+  --dw: 54px;                    /* digit width — everything scales off this */
+  --seg-t: calc(var(--dw) * .185);
+  --seg-on: var(--red-500);
+  --seg-glow: rgba(225, 29, 58, .55);
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .45rem;
+  padding: calc(var(--dw) * .38) calc(var(--dw) * .46) calc(var(--dw) * .3);
+  background: var(--clock-face);
+  border: calc(var(--dw) * .16) solid var(--red-500);
+  border-radius: calc(var(--dw) * .42);
+  box-shadow:
+    inset 0 0 calc(var(--dw) * .7) rgba(0, 0, 0, .75),
+    0 18px 40px -22px rgba(225, 29, 58, .8);
+  width: 100%;
+}
+.clock::after {                  /* glass sheen across the face */
+  content: "";
+  position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: linear-gradient(158deg, rgba(255, 255, 255, .07) 0%, transparent 38%);
+}
+
+.clock__digits {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--dw) * .16);
+}
+
+.clock__unit {
+  font-family: var(--mono);
+  font-size: calc(var(--dw) * .17);
+  letter-spacing: .34em;
+  color: rgba(255, 255, 255, .3);
+  text-indent: .34em;
+}
+
+/* ── one digit ── */
+.digit {
+  position: relative;
+  width: var(--dw);
+  height: calc(var(--dw) * 1.8);
+  flex-shrink: 0;
+}
+.seg {
+  position: absolute;
+  background: var(--seg-off);
+  transition: background .12s linear, box-shadow .12s linear, opacity .12s linear;
+}
+.seg.is-on {
+  background: var(--seg-on);
+  box-shadow: 0 0 calc(var(--dw) * .2) var(--seg-glow);
+}
+
+/* horizontals: a (top) · g (middle) · d (bottom) */
+.seg--a, .seg--g, .seg--d {
+  left: calc(var(--dw) * .13);
+  width: calc(var(--dw) * .74);
+  height: var(--seg-t);
+  clip-path: polygon(9% 0, 91% 0, 100% 50%, 91% 100%, 9% 100%, 0 50%);
+}
+.seg--a { top: 0; }
+.seg--g { top: calc(var(--dw) * .8075); }
+.seg--d { top: calc(var(--dw) * 1.615); }
+
+/* verticals: f/b (upper left / right) · e/c (lower left / right) */
+.seg--f, .seg--b, .seg--e, .seg--c {
+  width: var(--seg-t);
+  height: calc(var(--dw) * .72);
+  clip-path: polygon(0 6%, 50% 0, 100% 6%, 100% 94%, 50% 100%, 0 94%);
+}
+.seg--f { left: 0; top: calc(var(--dw) * .06); }
+.seg--b { right: 0; top: calc(var(--dw) * .06); }
+.seg--e { left: 0; top: calc(var(--dw) * .945); }
+.seg--c { right: 0; top: calc(var(--dw) * .945); }
+
+/* ── colon ── */
+.colon {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: calc(var(--dw) * .38);
+  height: calc(var(--dw) * 1.8);
+  padding-inline: calc(var(--dw) * .05);
+}
+.colon i {
+  width: var(--seg-t);
+  height: var(--seg-t);
+  border-radius: calc(var(--dw) * .03);
+  background: var(--seg-on);
+  box-shadow: 0 0 calc(var(--dw) * .2) var(--seg-glow);
+}
+.clock.is-ticking .colon i { animation: colonBlink 1s steps(1) infinite; }
+@keyframes colonBlink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: .12; }
+}
+
+/* ── states ── */
+.clock.is-warn { --seg-on: #ff9f1c; --seg-glow: rgba(255, 159, 28, .55); border-color: #ff9f1c; }
+.clock.is-warn { box-shadow: inset 0 0 calc(var(--dw) * .7) rgba(0, 0, 0, .75), 0 18px 40px -22px rgba(255, 159, 28, .8); }
+.clock.is-arrived { --seg-on: #17c964; --seg-glow: rgba(23, 201, 100, .55); border-color: #17c964; }
+.clock.is-arrived { box-shadow: inset 0 0 calc(var(--dw) * .7) rgba(0, 0, 0, .75), 0 18px 40px -22px rgba(23, 201, 100, .85); }
+.clock.is-arrived .clock__digits { animation: arrivedFlash 1s ease-in-out 3; }
+@keyframes arrivedFlash { 50% { opacity: .28; } }
+
+/* ── the small one in the contact card ── */
+.clock--mini { --dw: 30px; width: auto; }
+.clock--mini .clock__unit { display: none; }
+
+@media (max-width: 620px) { .clock { --dw: 40px; } }
+@media (max-width: 400px) { .clock { --dw: 32px; } }

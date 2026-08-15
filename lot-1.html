@@ -1,0 +1,251 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" id="metaTheme" content="#07090d" />
+<title>Lot 1 — Lot admin — Sakib Apparels</title>
+<meta name="description" content="Lot 1 production sheet: dates, item codes, photos and line progress." />
+<script>
+/* Runs before first paint so the saved theme applies with no flash. */
+(function(){var d=document.documentElement;
+try{var t=localStorage.getItem('sakib-theme');
+if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
+d.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="styles.css" />
+<noscript><style>.preloader{display:none}[data-reveal],.word{opacity:1!important;transform:none!important}</style></noscript>
+</head>
+<body>
+
+<div class="preloader" id="preloader">
+  <div class="preloader__inner">
+    <svg class="preloader__mark" viewBox="0 0 48 48" aria-hidden="true">
+      <path class="pl-path" d="M6 8 L24 40 L42 8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square"/>
+      <path class="pl-path pl-path--2" d="M16 8 L24 22 L32 8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square"/>
+    </svg>
+    <div class="preloader__bar"><span id="plBar"></span></div>
+    <div class="preloader__count"><span id="plCount">0</span><i>%</i></div>
+  </div>
+</div>
+
+<div class="scrollbar" id="scrollbar"><span></span></div>
+
+<div class="backdrop" aria-hidden="true">
+  <div class="backdrop__grid"></div>
+  <div class="backdrop__glow backdrop__glow--a"></div>
+  <div class="backdrop__glow backdrop__glow--b"></div>
+  <div class="backdrop__glow backdrop__glow--c"></div>
+</div>
+
+<header class="header" id="header">
+  <div class="shell header__inner">
+    <a href="index.html" class="brand">
+      <svg class="brand__mark" viewBox="0 0 48 48" aria-hidden="true">
+        <path d="M6 8 L24 40 L42 8" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="square"/>
+        <path d="M17 8 L24 20 L31 8" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="square" opacity=".45"/>
+      </svg>
+      <span class="brand__word">SAKIB APPARELS</span>
+    </a>
+
+    <nav class="nav">
+      <a href="index.html" class="nav__link"><span>Home</span><span>Home</span></a>
+      <a href="about.html" class="nav__link"><span>About Us</span><span>About Us</span></a>
+      <a href="services.html" class="nav__link"><span>Services</span><span>Services</span></a>
+      <a href="contact.html" class="nav__link"><span>Contact Us</span><span>Contact Us</span></a>
+    </nav>
+
+    <div class="header__actions">
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch colour theme">
+        <span class="theme-toggle__track">
+          <span class="theme-toggle__thumb">
+            <svg class="ic ic--sun" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="4.2" fill="currentColor"/>
+              <g stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/>
+              </g>
+            </svg>
+            <svg class="ic ic--moon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 14.2A8.4 8.4 0 0 1 9.8 4 8.6 8.6 0 1 0 20 14.2Z" fill="currentColor"/>
+            </svg>
+          </span>
+        </span>
+      </button>
+
+      <a href="admin.html" class="btn btn--solid btn--sm magnetic">
+        <span class="btn__label">All lots</span>
+        <span class="btn__shine"></span>
+      </a>
+
+      <button class="burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="drawer" id="drawer">
+  <nav class="drawer__nav">
+    <a href="index.html" data-drawer-link>Home</a>
+    <a href="about.html" data-drawer-link>About Us</a>
+    <a href="services.html" data-drawer-link>Services</a>
+    <a href="contact.html" data-drawer-link>Contact Us</a>
+    <a href="admin.html" class="is-current" data-drawer-link>Admins</a>
+  </nav>
+  <div class="drawer__meta">
+    <span>info@sakibapparels.example</span>
+    <span>+880 2 5566 0148</span>
+  </div>
+</div>
+
+<main>
+
+<section class="subhero">
+  <div class="shell subhero__inner">
+    <div class="crumbs" data-reveal data-intro>
+      <a href="index.html">Home</a><i>/</i><a href="admin.html">Admins</a><i>/</i><span id="lotCrumb">Lot 1</span>
+    </div>
+    <h1 id="lotHeading" data-split data-intro>Lot 1 production sheet</h1>
+    <p id="lotDesc" data-reveal data-intro>Combed cotton t-shirt programme for the spring order book.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="shell">
+    <nav class="lotnav" id="lotNav" data-lot-current="1" data-reveal>
+      <a href="lot-1.html" class="is-current">Lot 1</a>
+      <a href="lot-2.html">Lot 2</a>
+      <a href="lot-3.html">Lot 3</a>
+      <a href="lot-4.html">Lot 4</a>
+      <a href="lot-5.html">Lot 5</a>
+    </nav>
+
+    <div class="tally" id="lotTally" data-reveal>
+      <div class="tally__item"><b><span class="count" data-count="15">0</span></b><span>Orders</span></div>
+      <div class="tally__item"><b><span class="count" data-count="3780">0</span></b><span>Total quantity</span></div>
+      <div class="tally__item"><b><span class="count" data-count="12">0</span></b><span>Cutting done</span></div>
+      <div class="tally__item"><b><span class="count" data-count="8">0</span></b><span>Sewing done</span></div>
+      <div class="tally__item"><b><span class="count" data-count="2">0</span></b><span>Finishing done</span></div>
+    </div>
+
+    <h2 class="sheet__title" data-reveal>Details of different orders</h2>
+
+    <div class="sheet scroll-x" data-lot-sheet="1" data-reveal>
+      <table>
+        <caption class="visually-hidden">Lot 1 — details of different orders</caption>
+        <thead>
+          <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Item code</th>
+            <th scope="col">Photo</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Cutting</th>
+            <th scope="col">Sewing</th>
+            <th scope="col">Finishing</th>
+            <th scope="col">Remark/Note</th>
+          </tr>
+        </thead>
+        <tbody id="sheetBody">
+          <tr style="--d:0s"><td class="sheet__date">2026-05-25</td><td class="sheet__code">458css</td><td class="sheet__photo"><span class="nophoto">No photo</span></td><td class="sheet__qty">360</td><td>In progress</td><td>Pending</td><td></td><td class="sheet__note">Hold for buyer sign-off</td></tr>
+          <tr style="--d:0.035s"><td class="sheet__date">2026-05-18</td><td class="sheet__code">101ikb</td><td class="sheet__photo"><span class="nophoto">No photo</span></td><td class="sheet__qty">200</td><td>Done</td><td>Done</td><td>Pending</td><td class="sheet__note">Hold for buyer sign-off</td></tr>
+          <tr style="--d:0.07s"><td class="sheet__date">2026-05-04</td><td class="sheet__code">256ocn</td><td class="sheet__photo"><span class="nophoto">No photo</span></td><td class="sheet__qty">200</td><td>Pending</td><td></td><td></td><td class="sheet__note"></td></tr>
+          <tr style="--d:0.105s"><td class="sheet__date">2026-05-10</td><td class="sheet__code">296eor</td><td class="sheet__photo"><span class="nophoto">No photo</span></td><td class="sheet__qty">480</td><td>Done</td><td>Done</td><td>Pending</td><td class="sheet__note">Reissued after seam fault</td></tr>
+          <tr style="--d:0.14s"><td class="sheet__date">2026-05-21</td><td class="sheet__code">317ris</td><td class="sheet__photo"><span class="nophoto">No photo</span></td><td class="sheet__qty">300</td><td>Done</td><td>Done</td><td>Done</td><td class="sheet__note">Lining swap approved</td></tr>
+          <tr style="--d:0.175s"><td class="sheet__date">2026-05-14</td><td class="sheet__code">lgg512</td><td class="sheet__photo"><span class="nophoto">No photo</span></td><td class="sheet__qty">480</td><td>Done</td><td>Done</td><td>Pending</td><td class="sheet__note">Reissued after seam fault</td></tr>
+          <tr style="--d:0.21s"><td class="sheet__date">2026-05-25</td><td class="sheet__code">612hzs</td><td class="sheet__photo"><span class="nophoto">No photo</span></td><td class="sheet__qty">240</td><td>In progress</td><td>Pending</td><td></td><td class="sheet__note">Reissued after seam fault</td></tr>
+          <tr style="--d:0.245s"><td class="sheet__date">2026-05-16</td><td class="sheet__code">088may</td><td class="sheet__photo"><span class="nophoto">No photo</span></td><td class="sheet__qty">60</td><td>Done</td><td>In progress</td><td>Pending</td><td class="sheet__note">Lining swap approved</td></tr>
+          <tr style="--d:0.28s"><td class="sheet__date">2026-05-27</td><td class="sheet__code">123fqp</td><td class="sheet__photo"><span class="nophoto">No photo</span></td><td class="sheet__qty">60</td><td>Done</td><td>In progress</td><td>Pending</td><td class="sheet__note">Lining swap approved</td></tr>
+          <tr style="--d:0.315s"><td class="sheet__date">2026-05-25</td><td class="sheet__code">332fdv</td><td class="sheet__photo"><span class="nophoto">No photo</span></td><td class="sheet__qty">40</td><td>Done</td><td>Done</td><td>In progress</td><td class="sheet__note">Packed early</td></tr>
+          <tr style="--d:0.35s"><td class="sheet__date">2026-05-13</td><td class="sheet__code">496nxh</td><td class="sheet__photo"><span class="nophoto">No photo</span></td><td class="sheet__qty">300</td><td>Done</td><td>In progress</td><td>Pending</td><td class="sheet__note">Awaiting trim delivery</td></tr>
+          <tr style="--d:0.385s"><td class="sheet__date">2026-05-05</td><td class="sheet__code">jtf871</td><td class="sheet__photo"><span class="nophoto">No photo</span></td><td class="sheet__qty">300</td><td>Done</td><td>Done</td><td>Pending</td><td class="sheet__note">Colour matched to swatch</td></tr>
+          <tr style="--d:0.42s"><td class="sheet__date">2026-05-15</td><td class="sheet__code">142edo</td><td class="sheet__photo"><span class="nophoto">No photo</span></td><td class="sheet__qty">200</td><td>Done</td><td>Done</td><td>Pending</td><td class="sheet__note">Recut sleeve panel</td></tr>
+          <tr style="--d:0.455s"><td class="sheet__date">2026-05-08</td><td class="sheet__code">548dsq</td><td class="sheet__photo"><span class="nophoto">No photo</span></td><td class="sheet__qty">480</td><td>Done</td><td>Done</td><td>Done</td><td class="sheet__note">Reissued after seam fault</td></tr>
+          <tr style="--d:0.49s"><td class="sheet__date">2026-05-13</td><td class="sheet__code">209srw</td><td class="sheet__photo"><span class="nophoto">No photo</span></td><td class="sheet__qty">80</td><td>Done</td><td>Pending</td><td></td><td class="sheet__note">Packed early</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="sheet-note">Open Products, unlock Edit and choose this lot to change any cell. Prototype data.</p>
+  </div>
+</section>
+
+<section class="cta" id="contact">
+  <div class="shell cta__inner">
+    <span class="kicker" data-reveal>Next step</span>
+    <h2 class="cta__title" data-split>Need a quote against this lot?</h2>
+    <p class="cta__lede" data-reveal data-delay="100">
+      Tell us the item code and your merchandiser will confirm a ship date within one
+      working day.
+    </p>
+
+    <form class="cta__form" data-reveal data-delay="180" id="ctaForm" novalidate>
+      <div class="field">
+        <input type="text" id="fName" required autocomplete="name" placeholder=" " />
+        <label for="fName">Full name</label>
+        <span class="field__line"></span>
+      </div>
+      <div class="field">
+        <input type="email" id="fMail" required autocomplete="email" placeholder=" " />
+        <label for="fMail">Work email</label>
+        <span class="field__line"></span>
+      </div>
+      <button class="btn btn--solid magnetic" type="submit">
+        <span class="btn__label">Send enquiry</span>
+        <span class="btn__shine"></span>
+      </button>
+      <p class="cta__note" id="formNote" role="status"></p>
+    </form>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="shell footer__inner">
+    <div class="footer__brand">
+      <a href="index.html" class="brand">
+        <svg class="brand__mark" viewBox="0 0 48 48" aria-hidden="true">
+          <path d="M6 8 L24 40 L42 8" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="square"/>
+          <path d="M17 8 L24 20 L31 8" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="square" opacity=".45"/>
+        </svg>
+        <span class="brand__word">SAKIB APPARELS</span>
+      </a>
+      <p>Knitwear manufacturing and garment export from Bangladesh to global markets.</p>
+    </div>
+
+    <nav class="footer__col">
+      <h4>Pages</h4>
+      <a href="index.html">Home</a>
+      <a href="about.html">About Us</a>
+      <a href="services.html">Services</a>
+      <a href="contact.html">Contact Us</a>
+      <a href="admin.html">Admins</a>
+    </nav>
+
+    <nav class="footer__col">
+      <h4>Production lots</h4>
+      <a href="lot-1.html">Lot 1</a>
+      <a href="lot-2.html">Lot 2</a>
+      <a href="lot-3.html">Lot 3</a>
+      <a href="lot-4.html">Lot 4</a>
+      <a href="lot-5.html">Lot 5</a>
+    </nav>
+
+    <div class="footer__col">
+      <h4>Factory &amp; office</h4>
+      <p>Sakib Apparels Limited<br />Plot 21, DEPZ Extension Area<br />Savar, Dhaka 1349, Bangladesh</p>
+    </div>
+  </div>
+
+  <div class="shell footer__base">
+    <span>© 2026 Sakib Apparels Limited. Prototype — content is illustrative.</span>
+    <div class="footer__legal">
+      <a href="#">Privacy</a><a href="#">Terms</a><a href="#">Modern slavery statement</a>
+    </div>
+  </div>
+</footer>
+
+<script src="lots-data.js"></script>
+<script src="lots.js"></script>
+<script src="main.js"></script>
+</body>
+</html>

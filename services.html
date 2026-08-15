@@ -1,0 +1,390 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" id="metaTheme" content="#07090d" />
+<title>Services — Sakib Apparels Limited</title>
+<meta name="description" content="Fabric sourcing, manufacturing, quality inspection, packaging and shipment for knitwear buyers worldwide." />
+<script>
+/* Runs before first paint so the saved theme applies with no flash. */
+(function(){var d=document.documentElement;
+try{var t=localStorage.getItem('sakib-theme');
+if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
+d.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="styles.css" />
+<noscript><style>.preloader{display:none}[data-reveal],.word{opacity:1!important;transform:none!important}</style></noscript>
+</head>
+<body>
+
+<div class="preloader" id="preloader">
+  <div class="preloader__inner">
+    <svg class="preloader__mark" viewBox="0 0 48 48" aria-hidden="true">
+      <path class="pl-path" d="M6 8 L24 40 L42 8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square"/>
+      <path class="pl-path pl-path--2" d="M16 8 L24 22 L32 8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square"/>
+    </svg>
+    <div class="preloader__bar"><span id="plBar"></span></div>
+    <div class="preloader__count"><span id="plCount">0</span><i>%</i></div>
+  </div>
+</div>
+
+<div class="scrollbar" id="scrollbar"><span></span></div>
+
+<div class="backdrop" aria-hidden="true">
+  <div class="backdrop__grid"></div>
+  <div class="backdrop__glow backdrop__glow--a"></div>
+  <div class="backdrop__glow backdrop__glow--b"></div>
+  <div class="backdrop__glow backdrop__glow--c"></div>
+</div>
+
+<header class="header" id="header">
+  <div class="shell header__inner">
+    <a href="index.html" class="brand">
+      <svg class="brand__mark" viewBox="0 0 48 48" aria-hidden="true">
+        <path d="M6 8 L24 40 L42 8" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="square"/>
+        <path d="M17 8 L24 20 L31 8" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="square" opacity=".45"/>
+      </svg>
+      <span class="brand__word">SAKIB APPARELS</span>
+    </a>
+
+    <nav class="nav">
+      <a href="index.html" class="nav__link"><span>Home</span><span>Home</span></a>
+      <a href="about.html" class="nav__link"><span>About Us</span><span>About Us</span></a>
+      <a href="services.html" class="nav__link is-current"><span>Services</span><span>Services</span></a>
+      <a href="contact.html" class="nav__link"><span>Contact Us</span><span>Contact Us</span></a>
+    </nav>
+
+    <div class="header__actions">
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch colour theme">
+        <span class="theme-toggle__track">
+          <span class="theme-toggle__thumb">
+            <svg class="ic ic--sun" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="4.2" fill="currentColor"/>
+              <g stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/>
+              </g>
+            </svg>
+            <svg class="ic ic--moon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 14.2A8.4 8.4 0 0 1 9.8 4 8.6 8.6 0 1 0 20 14.2Z" fill="currentColor"/>
+            </svg>
+          </span>
+        </span>
+      </button>
+
+      <a href="contact.html" class="btn btn--solid btn--sm magnetic">
+        <span class="btn__label">Contact us</span>
+        <span class="btn__shine"></span>
+      </a>
+
+      <button class="burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="drawer" id="drawer">
+  <nav class="drawer__nav">
+    <a href="index.html" data-drawer-link>Home</a>
+    <a href="about.html" data-drawer-link>About Us</a>
+    <a href="services.html" class="is-current" data-drawer-link>Services</a>
+    <a href="contact.html" data-drawer-link>Contact Us</a>
+    <a href="admin.html" data-drawer-link>Admins</a>
+  </nav>
+  <div class="drawer__meta">
+    <span>info@sakibapparels.example</span>
+    <span>+880 2 5566 0148</span>
+  </div>
+</div>
+
+<main>
+<!-- ============ SUBHERO ============ -->
+<section class="subhero">
+  <div class="shell subhero__inner">
+    <div class="crumbs" data-reveal data-intro>
+      <a href="index.html">Home</a><i>/</i><span>Services</span>
+    </div>
+    <h1 data-split data-intro>From fabric sourcing to the shipping door.</h1>
+    <p data-reveal data-intro>
+      We maintain careful attention to detail throughout every stage of the production
+      process, so a single team carries your order from first enquiry to final shipment.
+    </p>
+
+    <div class="subhero__stats" data-reveal data-intro>
+      <div><b><span class="count" data-count="45" data-suffix=" days">0</span></b><span>Typical lead time</span></div>
+      <div><b><span class="count" data-count="14" data-suffix=" days">0</span></b><span>Sampling turnaround</span></div>
+      <div><b><span class="count" data-count="4">0</span></b><span>Inspection gates</span></div>
+      <div><b><span class="count" data-count="98" data-suffix="%">0</span></b><span>On-time shipment</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SERVICES ============ -->
+<section class="section" id="practices">
+  <div class="shell">
+    <div class="section__head">
+      <span class="kicker" data-reveal>01 — Services</span>
+      <h2 class="section__title" data-split>What we handle for you.</h2>
+    </div>
+
+    <div class="cards">
+      <article class="card spotlight tilt" data-reveal>
+        <div class="card__num">01</div>
+        <svg class="card__icon" viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M4 10l12-6 12 6-12 6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M4 16l12 6 12-6M4 22l12 6 12-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+        </svg>
+        <h3>Fabric &amp; material sourcing</h3>
+        <p>Knit fabrics, trims and packaging sourced against your specification, with lab dips and swatches approved before bulk.</p>
+        <ul class="card__list">
+          <li>Combed cotton, blends, fleece</li>
+          <li>Lab dip and swatch approval</li>
+          <li>Trim and accessory sourcing</li>
+        </ul>
+        <span class="card__glow"></span>
+      </article>
+
+      <article class="card spotlight tilt" data-reveal data-delay="80">
+        <div class="card__num">02</div>
+        <svg class="card__icon" viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M5 25V9a4 4 0 0 1 4-4h14a4 4 0 0 1 4 4v16z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M5 25h22M11 12h10M11 18h10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <h3>Manufacturing</h3>
+        <p>Cutting, sewing and finishing on balanced lines, with daily output tracked against the order book.</p>
+        <ul class="card__list">
+          <li>Pattern and fit blocks</li>
+          <li>Line balancing</li>
+          <li>Printing and embroidery</li>
+        </ul>
+        <span class="card__glow"></span>
+      </article>
+
+      <article class="card spotlight tilt" data-reveal data-delay="160">
+        <div class="card__num">03</div>
+        <svg class="card__icon" viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M16 3l11 4.5v8c0 7-4.7 12.2-11 13.5C9.7 27.7 5 22.5 5 15.5v-8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M11.5 15.8l3.2 3.2 6-6.4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h3>Quality inspection</h3>
+        <p>Four checkpoints — fabric, cutting, in-line sewing and final audit — so a fault never travels the whole run.</p>
+        <ul class="card__list">
+          <li>Fabric inspection</li>
+          <li>In-line sewing checks</li>
+          <li>AQL final audit</li>
+        </ul>
+        <span class="card__glow"></span>
+      </article>
+
+      <article class="card spotlight tilt" data-reveal data-delay="240">
+        <div class="card__num">04</div>
+        <svg class="card__icon" viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M4 11l12-6 12 6v10l-12 6-12-6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M4 11l12 6 12-6M16 17v10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+        </svg>
+        <h3>Packaging &amp; shipment</h3>
+        <p>Poly-bagging, cartoning and documentation prepared to your market's requirements, ready for the forwarder.</p>
+        <ul class="card__list">
+          <li>Buyer-specific packing</li>
+          <li>Carton marking</li>
+          <li>Export documentation</li>
+        </ul>
+        <span class="card__glow"></span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROCESS ============ -->
+<section class="section section--tint" id="process">
+  <div class="shell">
+    <div class="section__head section__head--split">
+      <div>
+        <span class="kicker" data-reveal>02 — How an order runs</span>
+        <h2 class="section__title" data-split>Four stages, one point of contact.</h2>
+      </div>
+      <p class="section__lede" data-reveal data-delay="120">
+        The same merchandiser stays with your order from enquiry to shipment, so you never
+        have to re-explain the brief.
+      </p>
+    </div>
+
+    <ol class="timeline" id="timeline">
+      <div class="timeline__rail"><span id="timelineFill"></span></div>
+
+      <li class="step" data-reveal>
+        <span class="step__marker"><i></i></span>
+        <div class="step__body">
+          <span class="step__idx">Stage 01</span>
+          <h3>Enquiry &amp; sampling</h3>
+          <p>Send a tech pack or a reference garment. We source the fabric, make a counter sample and agree the fit block with you.</p>
+          <div class="step__meta"><span>10–14 days</span><span>Sample approved</span></div>
+        </div>
+      </li>
+
+      <li class="step" data-reveal>
+        <span class="step__marker"><i></i></span>
+        <div class="step__body">
+          <span class="step__idx">Stage 02</span>
+          <h3>Costing &amp; order confirmation</h3>
+          <p>A costed quotation against your quantity and delivery window, then a confirmed order with a booked line slot.</p>
+          <div class="step__meta"><span>3–5 days</span><span>Price fixed</span></div>
+        </div>
+      </li>
+
+      <li class="step" data-reveal>
+        <span class="step__marker"><i></i></span>
+        <div class="step__body">
+          <span class="step__idx">Stage 03</span>
+          <h3>Bulk production</h3>
+          <p>Cutting, sewing and finishing run as a tracked lot. Cutting, sewing and finishing status is recorded per order, with photographs.</p>
+          <div class="step__meta"><span>25–30 days</span><span>Tracked daily</span></div>
+        </div>
+      </li>
+
+      <li class="step" data-reveal>
+        <span class="step__marker"><i></i></span>
+        <div class="step__body">
+          <span class="step__idx">Stage 04</span>
+          <h3>Inspection &amp; shipment</h3>
+          <p>Final AQL audit, packing to your carton specification, documentation prepared and handover to your nominated forwarder.</p>
+          <div class="step__meta"><span>5–7 days</span><span>Docs complete</span></div>
+        </div>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="section" id="faq">
+  <div class="shell faq">
+    <div class="faq__head">
+      <span class="kicker" data-reveal>03 — Questions</span>
+      <h2 class="section__title" data-split>Before you send a tech pack.</h2>
+      <p class="section__lede" data-reveal data-delay="120">
+        The five things buyers ask us first.
+      </p>
+    </div>
+
+    <div class="accordion" id="accordion">
+      <div class="acc" data-reveal>
+        <button class="acc__head" type="button" aria-expanded="false">
+          <span>What is your minimum order quantity?</span>
+          <span class="acc__sign"><i></i><i></i></span>
+        </button>
+        <div class="acc__panel"><div class="acc__inner">
+          <p>1,500 pieces per style for a first order, and 500 per colour within that. Repeat programmes can run lower once the fabric is already booked.</p>
+        </div></div>
+      </div>
+
+      <div class="acc" data-reveal data-delay="60">
+        <button class="acc__head" type="button" aria-expanded="false">
+          <span>How long does sampling take?</span>
+          <span class="acc__sign"><i></i><i></i></span>
+        </button>
+        <div class="acc__panel"><div class="acc__inner">
+          <p>Ten to fourteen days for a counter sample once the fabric is in house. Our sampling room is on site, so revisions come back in under a week.</p>
+        </div></div>
+      </div>
+
+      <div class="acc" data-reveal data-delay="120">
+        <button class="acc__head" type="button" aria-expanded="false">
+          <span>What is the typical lead time?</span>
+          <span class="acc__sign"><i></i><i></i></span>
+        </button>
+        <div class="acc__panel"><div class="acc__inner">
+          <p>Around 45 days from order confirmation to ex-factory for a standard knit programme, assuming fabric availability. Complex prints or special trims add a week.</p>
+        </div></div>
+      </div>
+
+      <div class="acc" data-reveal data-delay="180">
+        <button class="acc__head" type="button" aria-expanded="false">
+          <span>Can we inspect before shipment?</span>
+          <span class="acc__sign"><i></i><i></i></span>
+        </button>
+        <div class="acc__panel"><div class="acc__inner">
+          <p>Yes. We welcome buyer or third-party inspection at final audit, and we will share our own inspection results either way.</p>
+        </div></div>
+      </div>
+
+      <div class="acc" data-reveal data-delay="240">
+        <button class="acc__head" type="button" aria-expanded="false">
+          <span>How do you keep us updated during production?</span>
+          <span class="acc__sign"><i></i><i></i></span>
+        </button>
+        <div class="acc__panel"><div class="acc__inner">
+          <p>Each production lot has an order sheet recording date, item code, photograph, quantity and cutting, sewing and finishing status. Your merchandiser sends it weekly.</p>
+        </div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="cta">
+  <div class="shell cta__inner">
+    <span class="kicker" data-reveal>Next step</span>
+    <h2 class="cta__title" data-split>Tell us the style and the quantity.</h2>
+    <p class="cta__lede" data-reveal data-delay="100">
+      You will have an indicative price and a sampling timeline within two working days.
+    </p>
+    <div class="cta__buttons" data-reveal data-delay="180">
+      <a href="contact.html" class="btn btn--solid magnetic">
+        <span class="btn__label">Contact us</span>
+        <span class="btn__shine"></span>
+      </a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="shell footer__inner">
+    <div class="footer__brand">
+      <a href="index.html" class="brand">
+        <svg class="brand__mark" viewBox="0 0 48 48" aria-hidden="true">
+        <path d="M6 8 L24 40 L42 8" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="square"/>
+        <path d="M17 8 L24 20 L31 8" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="square" opacity=".45"/>
+      </svg>
+        <span class="brand__word">SAKIB APPARELS</span>
+      </a>
+      <p>Knitwear manufacturing and garment export from Bangladesh to global markets.</p>
+    </div>
+
+    <nav class="footer__col">
+      <h4>Pages</h4>
+      <a href="index.html">Home</a>
+      <a href="about.html">About Us</a>
+      <a href="services.html">Services</a>
+      <a href="contact.html">Contact Us</a>
+      <a href="admin.html">Admins</a>
+    </nav>
+
+    <nav class="footer__col">
+      <h4>What we make</h4>
+      <a href="services.html">T-shirts</a>
+      <a href="services.html">Tops &amp; crop tops</a>
+      <a href="services.html">Hoodies</a>
+      <a href="services.html">Trousers</a>
+    </nav>
+
+    <div class="footer__col">
+      <h4>Factory &amp; office</h4>
+      <p>Sakib Apparels Limited<br />Plot 21, DEPZ Extension Area<br />Savar, Dhaka 1349, Bangladesh</p>
+    </div>
+  </div>
+
+  <div class="shell footer__base">
+    <span>© 2026 Sakib Apparels Limited. Prototype — content is illustrative.</span>
+    <div class="footer__legal">
+      <a href="#">Privacy</a><a href="#">Terms</a><a href="#">Compliance</a>
+    </div>
+  </div>
+</footer>
+
+<script src="lots-data.js"></script>
+<script src="lots.js"></script>
+<script src="main.js"></script>
+</body>
+</html>

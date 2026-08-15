@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 120" width="420" height="120">
+  <title>M I - sleeve tag</title>
+  <g font-family='"Courier New", ui-monospace, monospace' font-weight="700" text-anchor="middle">
+    <text x="210" y="52" font-size="40" letter-spacing="10" fill="#00553D">01001101</text>
+    <text x="210" y="100" font-size="40" letter-spacing="10" fill="#00553D">01001001</text>
+  </g>
+</svg>
