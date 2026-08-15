@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 750" role="img" aria-label="Final quality inspection table">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#171a2c"/><stop offset="1" stop-color="#2b2350"/>
+    </linearGradient>
+    <pattern id="weave" width="14" height="14" patternUnits="userSpaceOnUse">
+      <path d="M0 7h14M7 0v14" stroke="#ffffff" stroke-opacity=".08" stroke-width="1.4"/>
+      <path d="M0 0l14 14M14 0L0 14" stroke="#ffffff" stroke-opacity=".04" stroke-width="1"/>
+    </pattern>
+    <linearGradient id="sheen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".22"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1000" height="750" fill="url(#bg)"/>
+  <rect width="1000" height="750" fill="url(#weave)"/>
+  <rect x="120" y="300" width="760" height="330" rx="18" fill="#ffffff" opacity=".1"/>
+  <rect x="120" y="300" width="760" height="18" rx="9" fill="#ffffff" opacity=".2"/>
+  <g transform="translate(330 420) scale(1.25) translate(-100 -110)">
+    <path d="M62 26 L88 16 Q100 40 112 16 L138 26 L178 52 L160 88 L143 78 V206 H57 V78 L40 88 L22 52 Z" fill="#ffffff" opacity=".92"/>
+    <path d="M62 26 L88 16 Q100 40 112 16 L138 26 L178 52 L160 88 L143 78 V206 H57 V78 L40 88 L22 52 Z" fill="url(#sheen)"/>
+    <path d="M62 26 L88 16 Q100 40 112 16 L138 26 L178 52 L160 88 L143 78 V206 H57 V78 L40 88 L22 52 Z" fill="none" stroke="#0d1320" stroke-opacity=".25" stroke-width="2.5" stroke-linejoin="round"/>
+  </g>
+  <g stroke="#7dd3fc" stroke-width="4" fill="none" opacity=".95">
+    <circle cx="640" cy="360" r="58"/>
+    <path d="M682 402 L740 460" stroke-linecap="round"/>
+    <path d="M614 360 l20 20 l34 -40" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g font-family="Segoe UI, Arial, sans-serif" fill="#ffffff">
+    <text x="640" y="520" font-size="21" opacity=".75">Measurement check</text>
+    <text x="640" y="556" font-size="21" opacity=".75">Seam and stitch density</text>
+    <text x="640" y="592" font-size="21" opacity=".75">Shade and trim match</text>
+  </g>
+  <rect x="0" y="690" width="1000" height="60" fill="#0d1320" opacity=".3"/>
+</svg>

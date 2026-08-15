@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 400" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Warp threads on the loom">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#10233f"/><stop offset="1" stop-color="#0e3f4a"/>
+    </linearGradient>
+    <pattern id="weave" width="14" height="14" patternUnits="userSpaceOnUse">
+      <path d="M0 7h14M7 0v14" stroke="#ffffff" stroke-opacity=".08" stroke-width="1.4"/>
+      <path d="M0 0l14 14M14 0L0 14" stroke="#ffffff" stroke-opacity=".04" stroke-width="1"/>
+    </pattern>
+    <linearGradient id="sheen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".22"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="400" fill="url(#bg)"/>
+  <path d="M0 0 Q40 200 0 400" fill="none" stroke="#ffffff" stroke-opacity="0.1" stroke-width="3"/>
+  <path d="M62 0 Q102 200 62 400" fill="none" stroke="#ffffff" stroke-opacity="0.15" stroke-width="3"/>
+  <path d="M124 0 Q164 200 124 400" fill="none" stroke="#ffffff" stroke-opacity="0.2" stroke-width="3"/>
+  <path d="M186 0 Q226 200 186 400" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3"/>
+  <path d="M248 0 Q288 200 248 400" fill="none" stroke="#ffffff" stroke-opacity="0.1" stroke-width="3"/>
+  <path d="M310 0 Q350 200 310 400" fill="none" stroke="#ffffff" stroke-opacity="0.15" stroke-width="3"/>
+  <path d="M372 0 Q412 200 372 400" fill="none" stroke="#ffffff" stroke-opacity="0.2" stroke-width="3"/>
+  <path d="M434 0 Q474 200 434 400" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3"/>
+  <path d="M496 0 Q536 200 496 400" fill="none" stroke="#ffffff" stroke-opacity="0.1" stroke-width="3"/>
+  <path d="M558 0 Q598 200 558 400" fill="none" stroke="#ffffff" stroke-opacity="0.15" stroke-width="3"/>
+  <path d="M620 0 Q660 200 620 400" fill="none" stroke="#ffffff" stroke-opacity="0.2" stroke-width="3"/>
+  <path d="M682 0 Q722 200 682 400" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3"/>
+  <path d="M744 0 Q784 200 744 400" fill="none" stroke="#ffffff" stroke-opacity="0.1" stroke-width="3"/>
+  <path d="M806 0 Q846 200 806 400" fill="none" stroke="#ffffff" stroke-opacity="0.15" stroke-width="3"/>
+  <path d="M868 0 Q908 200 868 400" fill="none" stroke="#ffffff" stroke-opacity="0.2" stroke-width="3"/>
+  <path d="M930 0 Q970 200 930 400" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3"/>
+  <path d="M992 0 Q1032 200 992 400" fill="none" stroke="#ffffff" stroke-opacity="0.1" stroke-width="3"/>
+  <path d="M1054 0 Q1094 200 1054 400" fill="none" stroke="#ffffff" stroke-opacity="0.15" stroke-width="3"/>
+  <path d="M1116 0 Q1156 200 1116 400" fill="none" stroke="#ffffff" stroke-opacity="0.2" stroke-width="3"/>
+  <path d="M1178 0 Q1218 200 1178 400" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3"/>
+  <path d="M1240 0 Q1280 200 1240 400" fill="none" stroke="#ffffff" stroke-opacity="0.1" stroke-width="3"/>
+  <path d="M1302 0 Q1342 200 1302 400" fill="none" stroke="#ffffff" stroke-opacity="0.15" stroke-width="3"/>
+  <path d="M1364 0 Q1404 200 1364 400" fill="none" stroke="#ffffff" stroke-opacity="0.2" stroke-width="3"/>
+  <path d="M1426 0 Q1466 200 1426 400" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3"/>
+  <path d="M1488 0 Q1528 200 1488 400" fill="none" stroke="#ffffff" stroke-opacity="0.1" stroke-width="3"/>
+  <path d="M1550 0 Q1590 200 1550 400" fill="none" stroke="#ffffff" stroke-opacity="0.15" stroke-width="3"/>
+
+  <rect width="1600" height="400" fill="url(#weave)"/>
+</svg>

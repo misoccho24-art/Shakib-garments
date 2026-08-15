@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" role="img" aria-label="Trousers">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#d4761f"/><stop offset="1" stop-color="#c23f5a"/>
+    </linearGradient>
+    <pattern id="weave" width="14" height="14" patternUnits="userSpaceOnUse">
+      <path d="M0 7h14M7 0v14" stroke="#ffffff" stroke-opacity=".08" stroke-width="1.4"/>
+      <path d="M0 0l14 14M14 0L0 14" stroke="#ffffff" stroke-opacity=".04" stroke-width="1"/>
+    </pattern>
+    <linearGradient id="sheen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".22"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="800" fill="url(#bg)"/>
+  <rect width="800" height="800" fill="url(#weave)"/>
+  <circle cx="620" cy="180" r="210" fill="#ffffff" opacity=".06"/>
+  <g transform="translate(400 400) scale(2.35) translate(-100 -113)">
+    <path d="M56 20 H144 L150 66 L134 210 H108 L100 118 L92 210 H66 L50 66 Z" fill="#ffffff" opacity=".95"/>
+    <path d="M56 20 H144 L150 66 L134 210 H108 L100 118 L92 210 H66 L50 66 Z" fill="url(#sheen)"/>
+    <path d="M56 20 H144 L150 66 L134 210 H108 L100 118 L92 210 H66 L50 66 Z" fill="none" stroke="#0d1320" stroke-opacity=".22" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M50 44 H150" stroke="#0d1320" stroke-opacity=".22" stroke-width="3"/>
+    <path d="M100 48 V118" stroke="#0d1320" stroke-opacity=".16" stroke-width="2.5" stroke-dasharray="5 6"/>
+    <rect x="60" y="52" width="26" height="18" rx="3" fill="none" stroke="#0d1320" stroke-opacity=".16" stroke-width="2"/>
+  </g>
+</svg>

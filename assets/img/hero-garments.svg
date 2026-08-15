@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1100" role="img" aria-label="Rail of finished knitwear">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#12213f"/><stop offset="1" stop-color="#0a3a52"/>
+    </linearGradient>
+    <pattern id="weave" width="14" height="14" patternUnits="userSpaceOnUse">
+      <path d="M0 7h14M7 0v14" stroke="#ffffff" stroke-opacity=".08" stroke-width="1.4"/>
+      <path d="M0 0l14 14M14 0L0 14" stroke="#ffffff" stroke-opacity=".04" stroke-width="1"/>
+    </pattern>
+    <linearGradient id="sheen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".22"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="1100" fill="url(#bg)"/>
+  <rect width="900" height="1100" fill="url(#weave)"/>
+  <circle cx="740" cy="200" r="260" fill="#4f8cff" opacity=".18"/>
+  <circle cx="180" cy="900" r="230" fill="#7dd3fc" opacity=".12"/>
+
+  <rect x="60" y="182" width="780" height="10" rx="5" fill="#0d1320" opacity=".5"/>
+  <rect x="60" y="182" width="780" height="4" rx="2" fill="#ffffff" opacity=".22"/>
+  <g transform="translate(150 300)">
+    <path d="M0 -78 v-26" stroke="#0d1320" stroke-opacity=".45" stroke-width="4"/>
+    <circle cx="0" cy="-108" r="12" fill="none" stroke="#0d1320" stroke-opacity=".45" stroke-width="4"/>
+    <path d="M-48 -70 L0 -96 L48 -70" fill="none" stroke="#0d1320" stroke-opacity=".45" stroke-width="5" stroke-linejoin="round"/>
+    <g transform="scale(0.78) translate(-100 -90)">
+      <path d="M62 26 L88 16 Q100 40 112 16 L138 26 L178 52 L160 88 L143 78 V206 H57 V78 L40 88 L22 52 Z" fill="#ffffff" opacity=".96"/>
+      <path d="M62 26 L88 16 Q100 40 112 16 L138 26 L178 52 L160 88 L143 78 V206 H57 V78 L40 88 L22 52 Z" fill="url(#sheen)"/>
+      <path d="M62 26 L88 16 Q100 40 112 16 L138 26 L178 52 L160 88 L143 78 V206 H57 V78 L40 88 L22 52 Z" fill="none" stroke="#0d1320" stroke-opacity=".28" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M75 22 Q100 52 125 22" fill="none" stroke="#0d1320" stroke-opacity=".28" stroke-width="2.5"/>
+    </g>
+  </g>
+  <g transform="translate(340 300)">
+    <path d="M0 -78 v-26" stroke="#0d1320" stroke-opacity=".45" stroke-width="4"/>
+    <circle cx="0" cy="-108" r="12" fill="none" stroke="#0d1320" stroke-opacity=".45" stroke-width="4"/>
+    <path d="M-48 -70 L0 -96 L48 -70" fill="none" stroke="#0d1320" stroke-opacity=".45" stroke-width="5" stroke-linejoin="round"/>
+    <g transform="scale(0.78) translate(-100 -90)">
+      <path d="M60 34 L86 22 Q100 48 114 22 L140 34 L180 62 L161 98 L144 88 V210 H56 V88 L39 98 L20 62 Z" fill="#cfe0ff" opacity=".96"/>
+      <path d="M60 34 L86 22 Q100 48 114 22 L140 34 L180 62 L161 98 L144 88 V210 H56 V88 L39 98 L20 62 Z" fill="url(#sheen)"/>
+      <path d="M60 34 L86 22 Q100 48 114 22 L140 34 L180 62 L161 98 L144 88 V210 H56 V88 L39 98 L20 62 Z" fill="none" stroke="#0d1320" stroke-opacity=".28" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M86 22 Q100 -8 114 22 Q100 44 86 22 Z" fill="#cfe0ff" stroke="#0d1320" stroke-opacity=".3" stroke-width="2.5"/><path d="M92 42 v24M108 42 v24" stroke="#0d1320" stroke-opacity=".35" stroke-width="3" stroke-linecap="round"/><rect x="70" y="130" width="60" height="32" rx="6" fill="none" stroke="#0d1320" stroke-opacity=".25" stroke-width="2.5"/>
+    </g>
+  </g>
+  <g transform="translate(530 300)">
+    <path d="M0 -78 v-26" stroke="#0d1320" stroke-opacity=".45" stroke-width="4"/>
+    <circle cx="0" cy="-108" r="12" fill="none" stroke="#0d1320" stroke-opacity=".45" stroke-width="4"/>
+    <path d="M-48 -70 L0 -96 L48 -70" fill="none" stroke="#0d1320" stroke-opacity=".45" stroke-width="5" stroke-linejoin="round"/>
+    <g transform="scale(0.78) translate(-100 -90)">
+      <path d="M62 26 L88 16 Q100 42 112 16 L138 26 L178 52 L160 88 L143 78 V150 H57 V78 L40 88 L22 52 Z" fill="#ffffff" opacity=".96"/>
+      <path d="M62 26 L88 16 Q100 42 112 16 L138 26 L178 52 L160 88 L143 78 V150 H57 V78 L40 88 L22 52 Z" fill="url(#sheen)"/>
+      <path d="M62 26 L88 16 Q100 42 112 16 L138 26 L178 52 L160 88 L143 78 V150 H57 V78 L40 88 L22 52 Z" fill="none" stroke="#0d1320" stroke-opacity=".28" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M75 22 Q100 54 125 22" fill="none" stroke="#0d1320" stroke-opacity=".28" stroke-width="2.5"/><path d="M57 142 h86" stroke="#0d1320" stroke-opacity=".28" stroke-width="3" stroke-dasharray="6 5"/>
+    </g>
+  </g>
+  <g transform="translate(720 300)">
+    <path d="M0 -78 v-26" stroke="#0d1320" stroke-opacity=".45" stroke-width="4"/>
+    <circle cx="0" cy="-108" r="12" fill="none" stroke="#0d1320" stroke-opacity=".45" stroke-width="4"/>
+    <path d="M-48 -70 L0 -96 L48 -70" fill="none" stroke="#0d1320" stroke-opacity=".45" stroke-width="5" stroke-linejoin="round"/>
+    <g transform="scale(0.78) translate(-100 -90)">
+      <path d="M56 20 H144 L150 66 L134 210 H108 L100 118 L92 210 H66 L50 66 Z" fill="#ffe0ef" opacity=".96"/>
+      <path d="M56 20 H144 L150 66 L134 210 H108 L100 118 L92 210 H66 L50 66 Z" fill="url(#sheen)"/>
+      <path d="M56 20 H144 L150 66 L134 210 H108 L100 118 L92 210 H66 L50 66 Z" fill="none" stroke="#0d1320" stroke-opacity=".28" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M50 44 H150" stroke="#0d1320" stroke-opacity=".3" stroke-width="3"/><path d="M100 48 V118" stroke="#0d1320" stroke-opacity=".2" stroke-width="2.5" stroke-dasharray="5 6"/>
+    </g>
+  </g>
+
+  <g opacity=".9">
+    <rect x="60" y="700" width="780" height="330" rx="20" fill="#0d1320" opacity=".3"/>
+    <text x="100" y="770" font-family="Segoe UI, Arial, sans-serif" font-size="30" font-weight="700"
+          letter-spacing="7" fill="#ffffff" opacity=".9">FINISHED GOODS</text>
+    <text x="100" y="818" font-family="Segoe UI, Arial, sans-serif" font-size="21"
+          fill="#ffffff" opacity=".62">Knit t-shirts, hoodies, crop tops and trousers</text>
+    <g stroke="#ffffff" stroke-opacity=".35" stroke-width="2">
+      <path d="M100 860 h700"/>
+    </g>
+    <g font-family="Segoe UI, Arial, sans-serif" font-size="19" fill="#ffffff" opacity=".72">
+      <text x="100" y="912">Combed cotton</text>
+      <text x="330" y="912">French terry</text>
+      <text x="545" y="912">Single jersey</text>
+      <text x="100" y="960">Slub</text>
+      <text x="330" y="960">Pique</text>
+      <text x="545" y="960">Brushed fleece</text>
+    </g>
+  </g>
+</svg>

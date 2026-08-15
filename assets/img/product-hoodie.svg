@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" role="img" aria-label="Hoodies">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f7f6c"/><stop offset="1" stop-color="#3aa93f"/>
+    </linearGradient>
+    <pattern id="weave" width="14" height="14" patternUnits="userSpaceOnUse">
+      <path d="M0 7h14M7 0v14" stroke="#ffffff" stroke-opacity=".08" stroke-width="1.4"/>
+      <path d="M0 0l14 14M14 0L0 14" stroke="#ffffff" stroke-opacity=".04" stroke-width="1"/>
+    </pattern>
+    <linearGradient id="sheen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".22"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="800" fill="url(#bg)"/>
+  <rect width="800" height="800" fill="url(#weave)"/>
+  <circle cx="620" cy="180" r="210" fill="#ffffff" opacity=".06"/>
+  <g transform="translate(400 400) scale(2.35) translate(-100 -113)">
+    <path d="M60 34 L86 22 Q100 48 114 22 L140 34 L180 62 L161 98 L144 88 V210 H56 V88 L39 98 L20 62 Z" fill="#ffffff" opacity=".95"/>
+    <path d="M60 34 L86 22 Q100 48 114 22 L140 34 L180 62 L161 98 L144 88 V210 H56 V88 L39 98 L20 62 Z" fill="url(#sheen)"/>
+    <path d="M60 34 L86 22 Q100 48 114 22 L140 34 L180 62 L161 98 L144 88 V210 H56 V88 L39 98 L20 62 Z" fill="none" stroke="#0d1320" stroke-opacity=".22" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M86 22 Q100 -8 114 22 Q100 44 86 22 Z" fill="#ffffff" opacity=".95"
+          stroke="#0d1320" stroke-opacity=".22" stroke-width="2.5"/>
+    <path d="M92 40 v26M108 40 v26" stroke="#0d1320" stroke-opacity=".3" stroke-width="3" stroke-linecap="round"/>
+    <rect x="70" y="128" width="60" height="34" rx="6" fill="none" stroke="#0d1320" stroke-opacity=".2" stroke-width="2.5"/>
+  </g>
+</svg>
