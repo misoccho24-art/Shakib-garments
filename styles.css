@@ -567,19 +567,14 @@ a:hover > .media img,
 .hero__bg::after{ content:none; }
 :root[data-theme="light"] .hero__bg img.is-active{ opacity:1; }
 
-/* White bar behind the hero copy. The photo runs from near-black girders
-   to blown-out skylights, so text laid straight over it — even with a
-   glow — was inconsistent to read. A solid white panel fixes that
-   outright: fixed light background, fixed dark text, same in both themes,
-   regardless of what is behind it in the photo. */
+/* Fully transparent — no card, no fill, no shadow (a box-shadow's blur
+   radius is still a blur), so the photo behind the copy is never
+   softened or covered. Text colour alone carries the contrast. */
 .hero__copy{
   position:relative;
-  background:#fff;
+  background:none;
   color:#0d1320;
   max-width:640px;
-  padding:clamp(28px,4vw,48px) clamp(26px,4vw,50px);
-  border-radius:var(--r-lg);
-  box-shadow:0 34px 80px -30px rgba(0,0,0,.55), 0 2px 0 rgba(0,0,0,.04);
 }
 
 .hero__copy .eyebrow,
@@ -604,17 +599,15 @@ a:hover > .media img,
 .hero__copy .hero__facts dd{ font-size:clamp(26px,3.6vw,34px); }
 .hero__copy .hero__facts{ border-top-color:rgba(13,19,32,.14); }
 
-/* the scroll hint sits directly on the photo, outside the panel — give it
-   its own small white bar so it stays legible too */
+/* transparent too — same rule as the copy above, nothing behind the text */
 .hero .scroll-hint{
-  width:fit-content; margin-inline:auto;   /* base rule is full-width; shrink to content so the bar hugs it */
-  padding:14px 16px 12px; background:#fff; border-radius:var(--r-md);
-  box-shadow:0 20px 50px -22px rgba(0,0,0,.55);
+  width:fit-content; margin-inline:auto;
   font-size:11px; font-weight:600; color:#0d1320;
 }
 .hero .scroll-hint__line{ background:rgba(13,19,32,.35); }
 
-/* buttons sit on the white panel now — ordinary card-level contrast */
+/* buttons still need a fill to read as buttons — only the text container
+   went transparent, not the interactive controls */
 .hero__cta .btn{ font-size:15.5px; padding:17px 30px; }
 .hero__cta .btn--solid{ background:#0b0e14; color:#fff; text-shadow:none; }
 .hero__cta .btn--ghost{
