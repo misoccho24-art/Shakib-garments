@@ -93,34 +93,44 @@ d.setAttribute('data-theme',t);}catch(e){}})();
     <a href="admin.html" data-drawer-link>Admins</a>
   </nav>
   <div class="drawer__meta">
-    <span>info@sakibapparels.example</span>
-    <span>+880 2 5566 0148</span>
+    <span>sakibapprelsltd@gmail.com</span>
+    <span>01819550355</span>
   </div>
 </div>
 
 <main>
 <!-- ============ HERO ============ -->
 <section class="hero">
-  <div class="hero__bg" aria-hidden="true">
-    <img src="assets/img/factory-interior.svg" data-photo="assets/photos/factory-interior.jpg" alt="" width="1600" height="900" />
+  <div class="hero__bg" id="heroBg" aria-hidden="true">
+    <img class="is-active" src="assets/img/factory-interior.svg" data-photo="assets/photos/factory-interior.jpg" alt="" width="1600" height="900" />
+    <img src="assets/img/factory-floor.svg" data-photo="assets/photos/hero-2.jpg" alt="" width="1600" height="900" loading="lazy" />
+    <img src="assets/img/fabric-swatches.svg" data-photo="assets/photos/hero-3.jpg" alt="" width="1600" height="900" loading="lazy" />
   </div>
 
   <div class="shell hero__inner">
     <div class="hero__copy">
       <div class="eyebrow" data-reveal data-intro>
         <span class="eyebrow__dot"></span>
-        <span>Knitwear manufacturer — Savar, Bangladesh</span>
+        <span>Knitwear manufacturer — Uttara, Dhaka</span>
       </div>
 
       <h1 class="hero__title" data-split data-intro>
         The future fashion<br />begins here.
       </h1>
 
-      <p class="hero__lede" data-reveal data-intro>
-        Sakib Apparels Limited is one of the best knitwear item manufacturers in Bangladesh,
-        making satisfied customers of global markets. We manufacture t-shirts, tops, crop tops,
-        hoodies and trousers with the best quality control, ensuring the highest comfort.
-      </p>
+      <div class="hero__lede hero__lines" id="heroLines" data-reveal data-intro>
+        <p class="hero__line is-active">
+          One of the best knitwear item manufacturer in Bangladesh to make satisfied
+          customers of global markets.
+        </p>
+        <p class="hero__line">
+          We manufacture t-shirts, tops, crop tops, hoodies, trousers etc. with best
+          quality control that ensures highest comfort.
+        </p>
+        <p class="hero__line">
+          We are also concerned about your fashion, luxury and values.
+        </p>
+      </div>
 
       <div class="hero__cta" data-reveal data-intro>
         <a href="contact.html" class="btn btn--solid magnetic">
@@ -142,42 +152,7 @@ d.setAttribute('data-theme',t);}catch(e){}})();
       </dl>
     </div>
 
-    <div class="hero__visual hero__cards" data-parallax="0.04">
-      <div class="orbit">
-        <div class="orbit__ring orbit__ring--1"></div>
-        <div class="orbit__ring orbit__ring--2"></div>
-        <div class="orbit__ring orbit__ring--3"></div>
-        <div class="orbit__core">
-          <svg viewBox="0 0 48 48" aria-hidden="true">
-            <path d="M6 8 L24 40 L42 8" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square"/>
-          </svg>
-        </div>
-        <span class="orbit__node orbit__node--1"></span>
-        <span class="orbit__node orbit__node--2"></span>
-        <span class="orbit__node orbit__node--3"></span>
-      </div>
-
-      <article class="float-card float-card--a">
-        <header>
-          <span class="float-card__tag">Quality pass rate</span>
-          <span class="pulse-dot"></span>
-        </header>
-        <strong>99.2<i>%</i></strong>
-        <div class="bars">
-          <span style="--h:52%"></span><span style="--h:74%"></span><span style="--h:63%"></span>
-          <span style="--h:88%"></span><span style="--h:71%"></span><span style="--h:96%"></span>
-        </div>
-      </article>
-
-      <article class="float-card float-card--b">
-        <header><span class="float-card__tag">Monthly capacity</span></header>
-        <strong>420k<i> pcs</i></strong>
-        <svg class="spark" viewBox="0 0 120 40" preserveAspectRatio="none" aria-hidden="true">
-          <path class="spark__line" d="M2 34 L20 28 L38 30 L56 18 L74 22 L92 10 L118 4"
-                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </article>
-    </div>  </div>
+  </div>
 
   <div class="shell">
     <div class="scroll-hint">
@@ -211,71 +186,73 @@ d.setAttribute('data-theme',t);}catch(e){}})();
 </section>
 
 <!-- ============ CAPABILITIES ============ -->
-<section class="section">
+<!-- ============ 01 SERVICES ============ -->
+<section class="section" id="services">
   <div class="shell">
     <div class="section__head section__head--split">
       <div>
-        <span class="kicker" data-reveal>01 — Capabilities</span>
-        <h2 class="section__title" data-split>Knitwear, made to your standard.</h2>
+        <span class="kicker" data-reveal>01 — Services</span>
+        <h2 class="section__title" data-split>From fabric sourcing to the shipping door.</h2>
       </div>
       <a href="services.html" class="btn btn--ghost magnetic" data-reveal data-delay="120">
-        <span class="btn__label">All services</span>
+        <span class="btn__label">Full services page</span>
         <svg class="btn__arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M12 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
     </div>
 
     <div class="cards">
-      <article class="card spotlight tilt" data-reveal>
+      <article class="card tilt" data-reveal>
+        <span class="card__sweep" aria-hidden="true"><img src="assets/img/fabric-swatches.svg" data-photo="assets/photos/card-fabric.jpg" alt="" loading="lazy" width="525" height="350" /></span>
         <div class="card__num">01</div>
         <svg class="card__icon" viewBox="0 0 32 32" aria-hidden="true">
-          <path d="M11 4l5 3 5-3 6 4-3 5-3-1v14H11V12l-3 1-3-5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M4 10l12-6 12 6-12 6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M4 16l12 6 12-6M4 22l12 6 12-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
         </svg>
-        <h3>T-shirts &amp; tops</h3>
-        <p>Single jersey, pique and slub in combed cotton and blends, cut and sewn to your fit block.</p>
-        <span class="card__glow"></span>
+        <h3>Fabric &amp; material sourcing</h3>
+        <p>Knit fabrics, trims and packaging sourced to your specification, with lab dips and swatches approved before bulk.</p>
       </article>
 
-      <article class="card spotlight tilt" data-reveal data-delay="80">
+      <article class="card tilt" data-reveal data-delay="80">
+        <span class="card__sweep" aria-hidden="true"><img src="assets/img/fabric-swatches.svg" data-photo="assets/photos/card-fabric.jpg" alt="" loading="lazy" width="525" height="350" /></span>
         <div class="card__num">02</div>
         <svg class="card__icon" viewBox="0 0 32 32" aria-hidden="true">
-          <path d="M10 5l6 3 6-3 5 4-2 5-3-1v15H10V13l-3 1-2-5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-          <path d="M13 8a3 3 0 0 0 6 0" fill="none" stroke="currentColor" stroke-width="1.8"/>
+          <path d="M5 25V9a4 4 0 0 1 4-4h14a4 4 0 0 1 4 4v16z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M5 25h22M11 12h10M11 18h10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
         </svg>
-        <h3>Crop tops</h3>
-        <p>Trend-led shapes with clean hems and consistent grading across the full size run.</p>
-        <span class="card__glow"></span>
+        <h3>Manufacturing</h3>
+        <p>Cutting, sewing and finishing on balanced lines, with daily output tracked against the order book.</p>
       </article>
 
-      <article class="card spotlight tilt" data-reveal data-delay="160">
+      <article class="card tilt" data-reveal data-delay="160">
+        <span class="card__sweep" aria-hidden="true"><img src="assets/img/fabric-swatches.svg" data-photo="assets/photos/card-fabric.jpg" alt="" loading="lazy" width="525" height="350" /></span>
         <div class="card__num">03</div>
         <svg class="card__icon" viewBox="0 0 32 32" aria-hidden="true">
-          <path d="M10 6l6-2 6 2 5 4-3 5-2-1v14H10V14l-2 1-3-5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-          <path d="M12 4c1.5 3 6.5 3 8 0" fill="none" stroke="currentColor" stroke-width="1.8"/>
+          <path d="M16 3l11 4.5v8c0 7-4.7 12.2-11 13.5C9.7 27.7 5 22.5 5 15.5v-8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M11.5 15.8l3.2 3.2 6-6.4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        <h3>Hoodies &amp; fleece</h3>
-        <p>Brushed fleece and french terry, with drawcords, eyelets and tipping to spec.</p>
-        <span class="card__glow"></span>
+        <h3>Quality inspection</h3>
+        <p>Four checkpoints — fabric, cutting, in-line sewing and final audit — so a fault never travels the whole run.</p>
       </article>
 
-      <article class="card spotlight tilt" data-reveal data-delay="240">
+      <article class="card tilt" data-reveal data-delay="240">
+        <span class="card__sweep" aria-hidden="true"><img src="assets/img/fabric-swatches.svg" data-photo="assets/photos/card-fabric.jpg" alt="" loading="lazy" width="525" height="350" /></span>
         <div class="card__num">04</div>
         <svg class="card__icon" viewBox="0 0 32 32" aria-hidden="true">
-          <path d="M9 4h14l1 24h-6l-2-13-2 13H8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M4 11l12-6 12 6v10l-12 6-12-6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M4 11l12 6 12-6M16 17v10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
         </svg>
-        <h3>Trousers</h3>
-        <p>Joggers and knit bottoms with reinforced seams, matched trims and stable shrinkage.</p>
-        <span class="card__glow"></span>
+        <h3>Packaging &amp; shipment</h3>
+        <p>Poly-bagging, cartoning and documentation prepared to your market's requirements, ready for the forwarder.</p>
       </article>
     </div>
   </div>
 </section>
-
 <!-- ============ GALLERY ============ -->
 <section class="section section--tint" id="gallery">
   <div class="shell">
     <div class="section__head section__head--split">
       <div>
-        <span class="kicker" data-reveal>02 — Our range</span>
+        <span class="kicker" data-reveal>Our range</span>
         <h2 class="section__title" data-split>Four knitwear families.</h2>
       </div>
       <p class="section__lede" data-reveal data-delay="120">
@@ -349,7 +326,7 @@ d.setAttribute('data-theme',t);}catch(e){}})();
 <section class="section section--tint">
   <div class="shell">
     <div class="section__head">
-      <span class="kicker" data-reveal>03 — Why buyers stay</span>
+      <span class="kicker" data-reveal>Why buyers stay</span>
       <h2 class="section__title" data-split>Quality, on time, every order.</h2>
     </div>
 
@@ -400,7 +377,7 @@ d.setAttribute('data-theme',t);}catch(e){}})();
 <section class="section">
   <div class="shell">
     <div class="section__head">
-      <span class="kicker" data-reveal>04 — Buyer voices</span>
+      <span class="kicker" data-reveal>Buyer voices</span>
       <h2 class="section__title" data-split>What our buyers say.</h2>
     </div>
 
@@ -438,7 +415,7 @@ d.setAttribute('data-theme',t);}catch(e){}})();
   <img src="assets/img/banner-threads.svg" data-photo="assets/photos/banner-threads.jpg" alt="" aria-hidden="true" loading="lazy" width="1600" height="400" />
   <div class="banner__inner" data-reveal>
     <h2 data-split>From yarn to carton, under one roof.</h2>
-    <p>Knitting, cutting, sewing, finishing, inspection and packing all happen on our own floor in Savar.</p>
+    <p>Knitting, cutting, sewing, finishing, inspection and packing all happen on our own floor in Uttara, Dhaka.</p>
     <a href="about.html" class="btn btn--solid magnetic">
       <span class="btn__label">About the factory</span>
       <span class="btn__shine"></span>
@@ -446,6 +423,84 @@ d.setAttribute('data-theme',t);}catch(e){}})();
   </div>
 </section>
 
+<!-- ============ ABOUT (also at about.html) ============ -->
+<section class="section" id="about">
+  <div class="shell">
+    <div class="section__head section__head--split">
+      <div>
+        <span class="kicker" data-reveal>02 — About</span>
+        <h2 class="section__title" data-split>Connecting Quality, Reliability, and Global Fashion</h2>
+      </div>
+      <a href="about.html" class="btn btn--ghost magnetic" data-reveal data-delay="120">
+        <span class="btn__label">Full about page</span>
+        <svg class="btn__arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M12 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+
+    <div class="split">
+      <div class="prose" data-reveal>
+        <p>
+          We are a trusted garment exporting company committed to delivering high-quality
+          apparel to international markets. With a strong focus on quality, responsible
+          production and customer satisfaction, we work closely with buyers and fashion
+          brands to turn their ideas into products that meet global standards.
+        </p>
+        <p>
+          From sourcing quality fabrics and materials to manufacturing, quality inspection,
+          packaging and shipment, we maintain careful attention to detail throughout every
+          stage of the production process.
+        </p>
+      </div>
+      <div class="prose" data-reveal data-delay="100">
+        <p>
+          Our experienced team understands the importance of timely delivery, consistent
+          quality, competitive pricing and clear communication in building long-term
+          business relationships.
+        </p>
+        <p>
+          We believe that successful business is built on <strong>trust, quality,
+          transparency and commitment</strong>. Our goal is not simply to export garments,
+          but to become a reliable long-term sourcing partner for our customers around
+          the world.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACT (also at contact.html) ============ -->
+<section class="section section--tint" id="contact-info">
+  <div class="shell">
+    <div class="section__head section__head--split">
+      <div>
+        <span class="kicker" data-reveal>03 — Contact</span>
+        <h2 class="section__title" data-split>Let us quote your next programme.</h2>
+      </div>
+      <a href="contact.html" class="btn btn--ghost magnetic" data-reveal data-delay="120">
+        <span class="btn__label">Full contact page</span>
+        <svg class="btn__arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M12 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+
+    <div class="offices">
+      <div class="office" data-reveal>
+        <h3>Factory</h3>
+        <p>Road 19, House 15<br />Uttara 7, Dhaka<br />Bangladesh</p>
+        <div class="office__meta">Sun–Thu, 09:00–18:00 (GMT+6)</div>
+      </div>
+      <div class="office" data-reveal data-delay="70">
+        <h3>Merchandising</h3>
+        <p>sakibapprelsltd@gmail.com<br />01819550355</p>
+        <div class="office__meta">Replies within one working day</div>
+      </div>
+      <div class="office" data-reveal data-delay="140">
+        <h3>Quality &amp; compliance</h3>
+        <p>sakibapprelsltd@gmail.com<br />01819550355</p>
+        <div class="office__meta">Audit requests welcome</div>
+      </div>
+    </div>
+  </div>
+</section>
 <!-- ============ CTA ============ -->
 <section class="cta" id="contact">
   <div class="shell cta__inner">
@@ -502,7 +557,7 @@ d.setAttribute('data-theme',t);}catch(e){}})();
 
     <div class="footer__col">
       <h4>Factory &amp; office</h4>
-      <p>Sakib Apparels Limited<br />Plot 21, DEPZ Extension Area<br />Savar, Dhaka 1349, Bangladesh</p>
+      <p>Sakib Apparels Limited<br />Road 19, House 15<br />Uttara 7, Dhaka, Bangladesh</p>
     </div>
   </div>
 

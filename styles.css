@@ -216,35 +216,38 @@ ul,ol{ margin:0; padding:0; list-style:none; }
 .header{
   position:fixed; top:0; left:0; right:0; z-index:110;
   height:var(--header-h);
-  border-bottom:1px solid transparent;
+  background:#fff;
+  border-bottom:1px solid rgba(13,19,32,.08);
+  box-shadow:0 8px 30px -18px rgba(0,0,0,.4);
   transform:translateY(-100%);
   animation:headerIn .8s var(--ease-out) .3s forwards;
-  transition:height .35s var(--ease-out), background-color .4s, border-color .4s, transform .4s var(--ease-out);
+  transition:height .35s var(--ease-out), box-shadow .4s, transform .4s var(--ease-out);
 }
 @keyframes headerIn{ to{ transform:translateY(0); } }
 .header.is-stuck{
-  background:color-mix(in srgb, var(--bg) 76%, transparent);
-  backdrop-filter:blur(14px) saturate(160%);
-  -webkit-backdrop-filter:blur(14px) saturate(160%);
-  border-bottom-color:var(--line);
   height:64px;
+  box-shadow:0 12px 34px -16px rgba(0,0,0,.45);
 }
 .header.is-hidden{ transform:translateY(-100%); animation:none; }
 .header__inner{ height:100%; display:flex; align-items:center; justify-content:space-between; gap:20px; }
 
+/* Fixed white bar, fixed dark text — the header reads the same in both
+   themes and over any hero content behind it, rather than following
+   var(--text)/var(--bg), which would go invisible on a white bar in the
+   dark theme. */
 .brand{ display:inline-flex; align-items:center; gap:10px; flex:none; }
 .brand__mark{ width:25px; height:25px; color:var(--accent); overflow:visible; }
 .brand:hover .brand__mark{ animation:markPop .6s var(--ease-spring); }
 @keyframes markPop{ 40%{ transform:translateY(-4px) rotate(-6deg); } }
-.brand__word{ font-weight:700; letter-spacing:.2em; font-size:13px; white-space:nowrap; }
+.brand__word{ font-weight:700; letter-spacing:.2em; font-size:13px; white-space:nowrap; color:#0d1320; }
 
 .nav{ display:flex; align-items:center; gap:2px; }
 .nav__link{
   position:relative; display:block; overflow:hidden; height:18px;
-  padding:0 13px; font-size:13.5px; color:var(--text-2); font-weight:500; white-space:nowrap;
+  padding:0 13px; font-size:13.5px; color:#6b7385; font-weight:500; white-space:nowrap;
 }
 .nav__link span{ display:block; transition:transform .4s var(--ease-out); }
-.nav__link span:last-child{ color:var(--text); }
+.nav__link span:last-child{ color:#0d1320; }
 .nav__link:hover span{ transform:translateY(-18px); }
 .nav__link::after{
   content:""; position:absolute; left:13px; right:13px; bottom:-6px; height:1px;
@@ -252,18 +255,19 @@ ul,ol{ margin:0; padding:0; list-style:none; }
   transition:transform .4s var(--ease-out);
 }
 .nav__link:hover::after,.nav__link.is-current::after{ transform:scaleX(1); transform-origin:left; }
-.nav__link.is-current span{ color:var(--text); }
+.nav__link.is-current span{ color:#0d1320; }
 
 .header__actions{ display:flex; align-items:center; gap:12px; flex:none; }
+.header .btn--solid{ background:#0b0e14; color:#fff; }
 
 /* ---------- Theme toggle ---------- */
 .theme-toggle{ padding:4px; border-radius:var(--r-full); flex:none; }
 .theme-toggle__track{
   display:block; position:relative; width:56px; height:30px; border-radius:var(--r-full);
-  background:var(--surface-2); border:1px solid var(--line);
+  background:rgba(13,19,32,.06); border:1px solid rgba(13,19,32,.16);
   transition:background-color .4s var(--ease-io), border-color .4s;
 }
-.theme-toggle:hover .theme-toggle__track{ border-color:var(--line-strong); }
+.theme-toggle:hover .theme-toggle__track{ border-color:rgba(13,19,32,.32); }
 .theme-toggle__thumb{
   position:absolute; top:3px; left:3px; width:22px; height:22px; border-radius:50%;
   background:linear-gradient(140deg,var(--accent),var(--accent-2));
@@ -281,7 +285,7 @@ ul,ol{ margin:0; padding:0; list-style:none; }
 /* ---------- Burger ---------- */
 .burger{ display:none; width:36px; height:36px; position:relative; flex:none; }
 .burger span{
-  position:absolute; left:8px; right:8px; height:1.6px; background:var(--text); border-radius:2px;
+  position:absolute; left:8px; right:8px; height:1.6px; background:#0d1320; border-radius:2px;
   transition:transform .35s var(--ease-out), opacity .2s;
 }
 .burger span:nth-child(1){ top:13px; }
@@ -388,10 +392,9 @@ ul,ol{ margin:0; padding:0; list-style:none; }
    HERO (home)
    ========================================================= */
 .hero{ position:relative; padding:calc(var(--header-h) + 70px) 0 84px; }
-.hero__inner{
-  display:grid; grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);
-  gap:56px; align-items:center;
-}
+/* single column now that the orbit and stat cards are gone */
+.hero__inner{ display:grid; gap:56px; align-items:center; }
+.hero__copy{ max-width:64ch; }
 .hero__title{ font-size:clamp(34px,5.4vw,70px); letter-spacing:-.038em; margin-bottom:22px; }
 .hero__lede{ font-size:clamp(15px,1.3vw,18px); color:var(--text-2); max-width:52ch; margin-bottom:32px; }
 .hero__cta{ display:flex; flex-wrap:wrap; gap:12px; margin-bottom:48px; }
@@ -542,89 +545,89 @@ a:hover > .media img,
 .hero{ position:relative; isolation:isolate; overflow:hidden; }
 .hero__bg{ position:absolute; inset:0; z-index:-1; }
 .hero__bg img{
+  position:absolute; inset:0;
   width:100%; height:100%; object-fit:cover; object-position:60% 55%;
-  transform:scale(1.04);
+  opacity:0; transition:opacity 1.1s var(--ease-io);
 }
-.hero__bg::after{
-  content:""; position:absolute; inset:0;
-  background:
-    linear-gradient(96deg,
-      color-mix(in srgb, var(--bg) 96%, transparent) 0%,
-      color-mix(in srgb, var(--bg) 74%, transparent) 26%,
-      color-mix(in srgb, var(--bg) 34%, transparent) 60%,
-      color-mix(in srgb, var(--bg) 52%, transparent) 100%),
-    linear-gradient(to bottom,
-      color-mix(in srgb, var(--bg) 62%, transparent) 0%,
-      transparent 26%,
-      transparent 62%,
-      color-mix(in srgb, var(--bg) 88%, transparent) 100%);
-}
-:root[data-theme="light"] .hero__bg img{ opacity:.55; }
+.hero__bg img.is-active{ opacity:1; }
 
-/* A real photograph is busier and brighter than the vector, so it gets a
-   heavier, warmer scrim to keep the headline readable over the highlights. */
-.hero__bg.is-photo img{ filter:saturate(.92) contrast(1.04); }
-.hero__bg.is-photo::after{
-  background:
-    linear-gradient(96deg,
-      color-mix(in srgb, var(--bg) 97%, transparent) 0%,
-      color-mix(in srgb, var(--bg) 88%, transparent) 30%,
-      color-mix(in srgb, var(--bg) 58%, transparent) 62%,
-      color-mix(in srgb, var(--bg) 72%, transparent) 100%),
-    linear-gradient(to bottom,
-      color-mix(in srgb, var(--bg) 70%, transparent) 0%,
-      color-mix(in srgb, var(--bg) 30%, transparent) 30%,
-      color-mix(in srgb, var(--bg) 40%, transparent) 62%,
-      color-mix(in srgb, var(--bg) 94%, transparent) 100%);
+/* rotating strapline — all three occupy one grid cell so the block never
+   changes height as they cross-fade */
+.hero__lines{ display:grid; }
+.hero__line{
+  grid-area:1/1; margin:0;
+  opacity:0; transform:translateY(8px); pointer-events:none;
+  transition:opacity .6s var(--ease-out), transform .6s var(--ease-out);
 }
-:root[data-theme="light"] .hero__bg.is-photo img{ opacity:.4; }
+.hero__line.is-active{ opacity:1; transform:none; pointer-events:auto; }
+/* ---------- Hero photograph: no scrim at all ----------
+   The client wants the factory image completely clear, so nothing is laid
+   over it and nothing dims it. The hero copy carries its own contrast
+   instead: white type with a tight dark shadow, in both themes. */
+.hero__bg::after{ content:none; }
+:root[data-theme="light"] .hero__bg img.is-active{ opacity:1; }
 
-@media (max-width:1080px){
-  .hero__bg.is-photo::after{
-    background:
-      linear-gradient(to bottom,
-        color-mix(in srgb, var(--bg) 84%, transparent) 0%,
-        color-mix(in srgb, var(--bg) 74%, transparent) 42%,
-        color-mix(in srgb, var(--bg) 62%, transparent) 72%,
-        color-mix(in srgb, var(--bg) 94%, transparent) 100%);
-  }
+/* White bar behind the hero copy. The photo runs from near-black girders
+   to blown-out skylights, so text laid straight over it — even with a
+   glow — was inconsistent to read. A solid white panel fixes that
+   outright: fixed light background, fixed dark text, same in both themes,
+   regardless of what is behind it in the photo. */
+.hero__copy{
+  position:relative;
+  background:#fff;
+  color:#0d1320;
+  max-width:640px;
+  padding:clamp(28px,4vw,48px) clamp(26px,4vw,50px);
+  border-radius:var(--r-lg);
+  box-shadow:0 34px 80px -30px rgba(0,0,0,.55), 0 2px 0 rgba(0,0,0,.04);
 }
 
-/* the column holds the orbit and the floating figures, over the photo */
-.hero__cards{ position:relative; width:100%; aspect-ratio:1/1; max-width:520px; margin-inline:auto; }
+.hero__copy .eyebrow,
+.hero__copy .hero__title,
+.hero__copy .hero__facts dt,
+.hero__copy .hero__facts dd{
+  color:#0d1320;
+  text-shadow:none;
+}
+.hero__copy .hero__line{ text-shadow:none; }   /* colour comes from .hero__lines, not black */
 
-/* the rings sit on a photograph now, so they need more presence than
-   they had against the flat background */
-.hero__cards .orbit__ring{ border-color:color-mix(in srgb, var(--text) 20%, transparent); }
-.hero__cards .orbit__ring--2{ border-color:color-mix(in srgb, var(--text) 14%, transparent); }
-.hero__cards .orbit__ring--3{ border-color:color-mix(in srgb, var(--text) 10%, transparent); }
-.hero__cards .orbit__core{ box-shadow:0 26px 60px -18px rgba(0,0,0,.65); }
-.hero__cards .orbit__node{ box-shadow:0 0 16px var(--glow-b); }
+/* larger throughout — the hero is the client's headline moment */
+.hero__title{ font-size:clamp(38px,5.6vw,72px); letter-spacing:-.04em; }
+.hero__lines{ font-size:clamp(17px,1.7vw,21px); line-height:1.55; font-weight:500; color:#3a4256; }
+.hero__copy .eyebrow{
+  font-size:clamp(13px,1.2vw,15px); font-weight:600;
+  padding:9px 18px 9px 14px;
+  background:rgba(13,19,32,.06);
+  border-color:rgba(13,19,32,.2);
+}
+.hero__copy .hero__facts dt{ font-size:12px; font-weight:600; color:#6b7385; }
+.hero__copy .hero__facts dd{ font-size:clamp(26px,3.6vw,34px); }
+.hero__copy .hero__facts{ border-top-color:rgba(13,19,32,.14); }
 
-/* stacked layout: the copy sits over the image, so the scrim goes
-   vertical instead of horizontal */
+/* the scroll hint sits directly on the photo, outside the panel — give it
+   its own small white bar so it stays legible too */
+.hero .scroll-hint{
+  width:fit-content; margin-inline:auto;   /* base rule is full-width; shrink to content so the bar hugs it */
+  padding:14px 16px 12px; background:#fff; border-radius:var(--r-md);
+  box-shadow:0 20px 50px -22px rgba(0,0,0,.55);
+  font-size:11px; font-weight:600; color:#0d1320;
+}
+.hero .scroll-hint__line{ background:rgba(13,19,32,.35); }
+
+/* buttons sit on the white panel now — ordinary card-level contrast */
+.hero__cta .btn{ font-size:15.5px; padding:17px 30px; }
+.hero__cta .btn--solid{ background:#0b0e14; color:#fff; text-shadow:none; }
+.hero__cta .btn--ghost{
+  color:#0d1320; border-color:rgba(13,19,32,.3);
+  background:rgba(13,19,32,.05);
+  text-shadow:none;
+}
+.hero__cta .btn--ghost:hover{ border-color:#0d1320; background:rgba(13,19,32,.1); }
+
 @media (max-width:1080px){
   .hero__bg img{ object-position:62% 50%; }
-  .hero__cards{ max-width:440px; }   /* stays square so the orbit reads */
-  .hero__bg::after{
-    background:
-      linear-gradient(to bottom,
-        color-mix(in srgb, var(--bg) 74%, transparent) 0%,
-        color-mix(in srgb, var(--bg) 58%, transparent) 40%,
-        color-mix(in srgb, var(--bg) 40%, transparent) 70%,
-        color-mix(in srgb, var(--bg) 88%, transparent) 100%);
-  }
 }
-@media (max-width:600px){
-  .hero__bg::after{
-    background:
-      linear-gradient(to bottom,
-        color-mix(in srgb, var(--bg) 82%, transparent) 0%,
-        color-mix(in srgb, var(--bg) 72%, transparent) 50%,
-        color-mix(in srgb, var(--bg) 92%, transparent) 100%);
-  }
-  .hero__cards{ max-width:360px; }
-}
+
 
 /* =========================================================
    SUBHERO (inner pages)
@@ -710,12 +713,45 @@ a:hover > .media img,
 .card__list li::before{ content:""; position:absolute; left:0; top:9px; width:7px; height:1px;
   background:var(--accent); transition:width .3s var(--ease-out); }
 .card:hover .card__list li::before{ width:11px; }
-.card__glow{
-  position:absolute; width:280px; height:280px; border-radius:50%; pointer-events:none;
-  background:radial-gradient(circle closest-side, var(--accent-soft), transparent 100%);
-  left:50%; top:50%; transform:translate(-50%,-50%); opacity:0; transition:opacity .35s;
+.card__glow{ display:none; }   /* replaced by the fabric sweep below */
+
+/* ---------- Fabric sweep on card hover ----------
+   The photo wipes in from the left behind the card content. A scrim built
+   from --bg keeps the heading and copy readable over it in both themes. */
+.card{ isolation:isolate; }
+.card__sweep{
+  position:absolute; inset:0; z-index:-1; overflow:hidden;
+  transform:translateX(-101%);
+  transition:transform .55s var(--ease-io);
 }
-.card:hover .card__glow{ opacity:1; }
+.card:hover .card__sweep,
+.card:focus-within .card__sweep{ transform:translateX(0); }
+/* The photo runs at full fidelity — no filter, no tint over it. */
+.card__sweep img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+/* With nothing dimming the photo, the card text carries its own contrast:
+   white type with a tight dark shadow, the way a caption sits on an image. */
+.card__sweep,
+.card h3, .card p, .card__num, .card__icon{
+  transition:transform .55s var(--ease-io), color .35s var(--ease-out),
+             text-shadow .35s var(--ease-out);
+}
+.card:hover h3,
+.card:hover p,
+.card:hover .card__num,
+.card:focus-within h3,
+.card:focus-within p,
+.card:focus-within .card__num{
+  color:#fff;
+  text-shadow:0 1px 2px rgba(0,0,0,.92), 0 2px 10px rgba(0,0,0,.75);
+}
+.card:hover .card__icon,
+.card:focus-within .card__icon{
+  color:#fff;
+  filter:drop-shadow(0 1px 3px rgba(0,0,0,.9));
+}
+/* the card's own tint would sit under the photo and mute it */
+.card:hover, .card:focus-within{ background:transparent; }
 
 /* =========================================================
    STATS BAND
@@ -1480,7 +1516,6 @@ a:hover > .media img,
    RESPONSIVE
    ========================================================= */
 @media (max-width:1080px){
-  .hero__inner{ grid-template-columns:1fr; gap:56px; }
   .faq{ grid-template-columns:1fr; }
   .work__item{ grid-template-columns:1fr; }
   .work__item--rev .work__panel{ order:0; }
@@ -1528,10 +1563,6 @@ a:hover > .media img,
    Strips the effects that cost the most per frame: backdrop
    blur, oversized gradient layers, hover-only transitions.
    ========================================================= */
-:root.lite .header.is-stuck{
-  background:var(--header-solid);
-  backdrop-filter:none; -webkit-backdrop-filter:none;
-}
 :root.lite .backdrop__grid{ animation:none; }
 :root.lite .backdrop__glow{ animation:none; opacity:.75; }
 :root.lite .backdrop__glow--c{ display:none; }
@@ -1552,6 +1583,7 @@ a:hover > .media img,
 @media (hover:none){
   .card:hover,.post:hover,.product:hover,.member:hover,
   .value:hover,.office:hover,.work__item:hover{ transform:none; box-shadow:none; }
+  .card__sweep{ display:none; }   /* no hover on touch — it would fire on tap */
   .step:hover .step__body{ transform:none; }
   .frow:hover{ transform:none; }
   .milestone:hover{ padding-left:0; }

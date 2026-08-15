@@ -310,6 +310,48 @@
     probe.src = img.dataset.photo;
   });
 
+  /* ---------------------------------------------------------
+     4c. HERO SLIDES
+     The background image and the strapline advance together;
+     the headline above them never changes.
+     --------------------------------------------------------- */
+  (function () {
+    var bg = $('#heroBg'), lines = $('#heroLines');
+    if (!bg || !lines) return;
+
+    var slides = $$('img', bg);
+    var texts  = $$('.hero__line', lines);
+    var n = Math.min(slides.length, texts.length);
+    if (n < 2) return;
+
+    var i = 0, timer = null;
+
+    function show(k) {
+      i = (k + n) % n;
+      slides.forEach(function (el, x) { el.classList.toggle('is-active', x === i); });
+      texts.forEach(function (el, x) { el.classList.toggle('is-active', x === i); });
+    }
+
+    function start() {
+      if (reduced) return;                 // one still frame, no rotation
+      clearInterval(timer);
+      timer = setInterval(function () { show(i + 1); }, 6000);
+    }
+
+    // pause while the hero is off-screen so nothing ticks behind the fold
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (e) {
+        e[0].isIntersecting ? start() : clearInterval(timer);
+      }, { threshold: 0.15 }).observe(bg.parentElement || bg);
+    } else {
+      start();
+    }
+
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) clearInterval(timer); else start();
+    });
+  })();
+
   /* Lot cards — shared by the Products summary and the admin page. */
   function paintLotCards(host) {
     if (!host || !LOTS) return;
