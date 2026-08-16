@@ -352,6 +352,45 @@
     });
   })();
 
+  /* ---------------------------------------------------------
+     4d. CARD SWEEP ON TOUCH
+     Touch devices have no hover, so the fabric sweep never fired
+     there. Drive it from scroll position instead: the card sweeps
+     as it enters the viewport and resets once it leaves, so it
+     replays on the way back.
+     --------------------------------------------------------- */
+  if (!reduced) {
+    var sweepCards = $$('.card__sweep').map(function (s) { return s.closest('.card'); })
+                                       .filter(Boolean);
+
+    if (sweepCards.length && 'IntersectionObserver' in window) {
+      // Checked live rather than once at load: a device can report touch
+      // after scripts run, and the window can be resized or rotated.
+      var hoverless = matchMedia('(hover: none)');
+
+      var sweepIO = new IntersectionObserver(function (entries) {
+        if (!hoverless.matches) {                 // desktop — CSS :hover owns it
+          entries.forEach(function (e) { e.target.classList.remove('is-swept'); });
+          return;
+        }
+        entries.forEach(function (e) {
+          e.target.classList.toggle('is-swept', e.isIntersecting);
+        });
+      }, { threshold: 0.55, rootMargin: '0px 0px -10% 0px' });
+
+      sweepCards.forEach(function (c) { sweepIO.observe(c); });
+
+      // switching to a pointer device should clear any stuck sweeps
+      var onHoverChange = function () {
+        if (!hoverless.matches) {
+          sweepCards.forEach(function (c) { c.classList.remove('is-swept'); });
+        }
+      };
+      if (hoverless.addEventListener) hoverless.addEventListener('change', onHoverChange);
+      else if (hoverless.addListener) hoverless.addListener(onHoverChange);
+    }
+  }
+
   /* Lot cards — shared by the Products summary and the admin page. */
   function paintLotCards(host) {
     if (!host || !LOTS) return;
@@ -755,7 +794,6 @@
     var ID_LETTERS = 'abcdefghijklmnopqrstuvwxyz';
     var ID_DIGITS  = '0123456789';
     var UNITS = 15;
-    var ADMIN_PIN = '1234';                                // prototype gate
 
     // three letters + three digits, either order — abd123 / 243ght
     function newCode() {
@@ -1174,84 +1212,9 @@
       if (lastFocus) lastFocus.focus();
     }
 
-    /* ---- PIN gate ---------------------------------------
-       Edit opens this; edit mode only unlocks on the right PIN.
-       Prototype only — a real gate belongs on the server.  */
-    var pinModal = $('#pinModal');
-    var pinForm  = $('#pinForm');
-    var pinMsg   = $('#pinMsg');
-    var pinInputs = $$('#pinBoxes input');
-    var pinPending = null;
-
-    function resetPin() {
-      pinInputs.forEach(function (i) { i.value = ''; i.classList.remove('is-filled'); });
-      pinForm.classList.remove('is-bad');
-      pinMsg.classList.remove('is-shown');
-    }
-
-    function askPin(onOk) {
-      pinPending = onOk;
-      resetPin();
-      openDialog(pinModal);
-      setTimeout(function () { pinInputs[0].focus(); }, 80);
-    }
-
-    pinInputs.forEach(function (input, i) {
-      input.addEventListener('input', function () {
-        input.value = input.value.replace(/\D/g, '').slice(0, 1);
-        input.classList.toggle('is-filled', input.value !== '');
-        pinForm.classList.remove('is-bad');
-        pinMsg.classList.remove('is-shown');
-        if (input.value && i < pinInputs.length - 1) pinInputs[i + 1].focus();
-        if (i === pinInputs.length - 1 && input.value) submitPin();
-      });
-      input.addEventListener('keydown', function (e) {
-        if (e.key === 'Backspace' && !input.value && i > 0) pinInputs[i - 1].focus();
-        if (e.key === 'ArrowLeft' && i > 0) pinInputs[i - 1].focus();
-        if (e.key === 'ArrowRight' && i < pinInputs.length - 1) pinInputs[i + 1].focus();
-      });
-      input.addEventListener('paste', function (e) {
-        var text = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
-        if (!text) return;
-        e.preventDefault();
-        pinInputs.forEach(function (box, k) {
-          if (k >= i && text[k - i]) { box.value = text[k - i]; box.classList.add('is-filled'); }
-        });
-        submitPin();
-      });
-    });
-
-    function submitPin() {
-      var entered = pinInputs.map(function (i) { return i.value; }).join('');
-      if (entered.length < 4) return;
-
-      if (entered === ADMIN_PIN) {
-        closeDialog(pinModal);
-        var cb = pinPending; pinPending = null;
-        if (cb) setTimeout(cb, 180);
-        return;
-      }
-
-      pinForm.classList.add('is-bad');
-      pinMsg.textContent = 'That PIN is not recognised.';
-      pinMsg.classList.add('is-shown');
-      if (!reduced && pinForm.animate) {
-        pinForm.animate(
-          [{ transform: 'translateX(0)' }, { transform: 'translateX(-8px)' },
-           { transform: 'translateX(7px)' }, { transform: 'translateX(0)' }],
-          { duration: 320, easing: 'ease-out' }
-        );
-      }
-      setTimeout(function () {
-        pinInputs.forEach(function (i) { i.value = ''; i.classList.remove('is-filled'); });
-        pinInputs[0].focus();
-      }, 340);
-    }
-
-    pinForm.addEventListener('submit', function (e) { e.preventDefault(); submitPin(); });
-    $('#pinClose').addEventListener('click', function () { closeDialog(pinModal); });
-
-    /* ---- Edit: gated by the PIN ---- */
+    /* ---- Edit toggle ----
+       No PIN here any more: the whole admin page is behind the gate in
+       section 14, so anyone on this page has already authenticated. */
     var editBtn = $('#adminEdit');
 
     function setEditing(on) {
@@ -1262,8 +1225,7 @@
     }
 
     editBtn.addEventListener('click', function () {
-      if (adminBar.classList.contains('is-editing')) { setEditing(false); return; }
-      askPin(function () { setEditing(true); });
+      setEditing(!adminBar.classList.contains('is-editing'));
     });
 
     /* ---- Add: inline sheet ---- */
@@ -1380,13 +1342,173 @@
     addEventListener('keydown', function (e) {
       if (e.key !== 'Escape') return;
       if (!drop.hidden) { closeDrop(); return; }
-      if (!pinModal.hidden) closeDialog(pinModal);
-      else closeDialog(customModal);
+      closeDialog(customModal);
     });
   }
 
   /* ---------------------------------------------------------
-     14. SAME-PAGE ANCHORS
+     14. ADMIN GATE
+     Runs on every page. Any link to admin.html opens a PIN dialog
+     first; the page is only reached once the PIN is accepted. The
+     dialog is built here rather than duplicated into 11 HTML files.
+
+     Prototype only — a session flag in the browser is not real
+     security. A live site needs the check on the server.
+     --------------------------------------------------------- */
+  (function () {
+    var ADMIN_PIN  = '1234';
+    var AUTH_KEY   = 'sakib-admin-auth';
+    var adminLinks = $$('a[href="admin.html"]');
+
+    function authed() {
+      try { return sessionStorage.getItem(AUTH_KEY) === '1'; } catch (e) { return false; }
+    }
+    function remember() {
+      try { sessionStorage.setItem(AUTH_KEY, '1'); } catch (e) {}
+    }
+
+    // nothing to gate and nothing to prompt for
+    var wantsPrompt = /[?&]admin=1/.test(location.search);
+    if (!adminLinks.length && !wantsPrompt) return;
+
+    /* ---- build the dialog ---- */
+    var modal = document.createElement('div');
+    modal.className = 'modal modal--sm';
+    modal.id = 'adminGate';
+    modal.hidden = true;
+    modal.innerHTML =
+      '<div class="modal__scrim" data-gate-close></div>' +
+      '<div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="gateTitle" tabindex="-1">' +
+        '<header class="modal__head">' +
+          '<div>' +
+            '<h3 id="gateTitle">Admin access</h3>' +
+            '<p><svg class="lockic" viewBox="0 0 24 24" aria-hidden="true">' +
+              '<path d="M7 10V7a5 5 0 0 1 10 0v3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>' +
+              '<rect x="4.5" y="10" width="15" height="10.5" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.9"/>' +
+            '</svg> Enter the 4-digit PIN to open the admin area.</p>' +
+          '</div>' +
+          '<button class="modal__x" type="button" data-gate-close aria-label="Close">' +
+            '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>' +
+          '</button>' +
+        '</header>' +
+        '<form class="pin" novalidate>' +
+          '<div class="pin__boxes">' +
+            '<input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="off" aria-label="PIN digit 1" />' +
+            '<input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="off" aria-label="PIN digit 2" />' +
+            '<input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="off" aria-label="PIN digit 3" />' +
+            '<input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="off" aria-label="PIN digit 4" />' +
+          '</div>' +
+          '<p class="pin__msg" role="status"></p>' +
+          '<button class="btn btn--solid" type="submit"><span class="btn__label">Unlock</span><span class="btn__shine"></span></button>' +
+          '<p class="pin__hint">Prototype build — the PIN is 1234.</p>' +
+        '</form>' +
+      '</div>';
+    document.body.appendChild(modal);
+
+    var form   = $('form', modal);
+    var msg    = $('.pin__msg', modal);
+    var boxes  = $$('input', modal);
+    var opener = null;
+
+    function open(fromEl) {
+      opener = fromEl || null;
+      boxes.forEach(function (b) { b.value = ''; b.classList.remove('is-filled'); });
+      form.classList.remove('is-bad');
+      msg.classList.remove('is-shown');
+      modal.hidden = false;
+      document.body.classList.add('is-locked');
+      requestAnimationFrame(function () {
+        modal.classList.add('is-open');
+        $('.modal__panel', modal).focus();
+        setTimeout(function () { boxes[0].focus(); }, 80);
+      });
+    }
+
+    function close() {
+      if (modal.hidden) return;
+      modal.classList.remove('is-open');
+      document.body.classList.remove('is-locked');
+      setTimeout(function () { modal.hidden = true; }, 320);
+      if (opener && opener.focus) opener.focus();
+    }
+
+    function reject() {
+      form.classList.add('is-bad');
+      msg.textContent = 'That PIN is not recognised.';
+      msg.classList.add('is-shown');
+      if (!reduced && form.animate) {
+        form.animate(
+          [{ transform: 'translateX(0)' }, { transform: 'translateX(-8px)' },
+           { transform: 'translateX(7px)' }, { transform: 'translateX(0)' }],
+          { duration: 320, easing: 'ease-out' }
+        );
+      }
+      setTimeout(function () {
+        boxes.forEach(function (b) { b.value = ''; b.classList.remove('is-filled'); });
+        boxes[0].focus();
+      }, 340);
+    }
+
+    function submit() {
+      var entered = boxes.map(function (b) { return b.value; }).join('');
+      if (entered.length < 4) return;
+      if (entered !== ADMIN_PIN) { reject(); return; }
+      remember();
+      msg.textContent = '';
+      location.href = 'admin.html';
+    }
+
+    boxes.forEach(function (input, i) {
+      input.addEventListener('input', function () {
+        input.value = input.value.replace(/\D/g, '').slice(0, 1);
+        input.classList.toggle('is-filled', input.value !== '');
+        form.classList.remove('is-bad');
+        msg.classList.remove('is-shown');
+        if (input.value && i < boxes.length - 1) boxes[i + 1].focus();
+        if (i === boxes.length - 1 && input.value) submit();
+      });
+      input.addEventListener('keydown', function (e) {
+        if (e.key === 'Backspace' && !input.value && i > 0) boxes[i - 1].focus();
+        if (e.key === 'ArrowLeft'  && i > 0) boxes[i - 1].focus();
+        if (e.key === 'ArrowRight' && i < boxes.length - 1) boxes[i + 1].focus();
+      });
+      input.addEventListener('paste', function (e) {
+        var text = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
+        if (!text) return;
+        e.preventDefault();
+        boxes.forEach(function (b, k) {
+          if (k >= i && text[k - i]) { b.value = text[k - i]; b.classList.add('is-filled'); }
+        });
+        submit();
+      });
+    });
+
+    form.addEventListener('submit', function (e) { e.preventDefault(); submit(); });
+    $$('[data-gate-close]', modal).forEach(function (el) {
+      el.addEventListener('click', close);
+    });
+    addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !modal.hidden) close();
+    });
+
+    /* ---- intercept every route into the admin area ---- */
+    adminLinks.forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        if (authed()) return;                 // already unlocked this session
+        e.preventDefault();
+        open(a);
+      });
+    });
+
+    // bounced back here by the admin page's own guard
+    if (wantsPrompt && !authed()) {
+      history.replaceState(null, '', location.pathname);
+      setTimeout(function () { open(null); }, 400);
+    }
+  })();
+
+  /* ---------------------------------------------------------
+     15. SAME-PAGE ANCHORS
      --------------------------------------------------------- */
   document.addEventListener('click', function (e) {
     var a = e.target.closest('a[href^="#"]');

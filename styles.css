@@ -717,8 +717,11 @@ a:hover > .media img,
   transform:translateX(-101%);
   transition:transform .55s var(--ease-io);
 }
+/* .is-swept is added by JS on touch devices when the card scrolls into
+   view, since those have no hover to trigger it. */
 .card:hover .card__sweep,
-.card:focus-within .card__sweep{ transform:translateX(0); }
+.card:focus-within .card__sweep,
+.card.is-swept .card__sweep{ transform:translateX(0); }
 /* The photo runs at full fidelity — no filter, no tint over it. */
 .card__sweep img{ width:100%; height:100%; object-fit:cover; display:block; }
 
@@ -734,17 +737,21 @@ a:hover > .media img,
 .card:hover .card__num,
 .card:focus-within h3,
 .card:focus-within p,
-.card:focus-within .card__num{
+.card:focus-within .card__num,
+.card.is-swept h3,
+.card.is-swept p,
+.card.is-swept .card__num{
   color:#fff;
   text-shadow:0 1px 2px rgba(0,0,0,.92), 0 2px 10px rgba(0,0,0,.75);
 }
 .card:hover .card__icon,
-.card:focus-within .card__icon{
+.card:focus-within .card__icon,
+.card.is-swept .card__icon{
   color:#fff;
   filter:drop-shadow(0 1px 3px rgba(0,0,0,.9));
 }
 /* the card's own tint would sit under the photo and mute it */
-.card:hover, .card:focus-within{ background:transparent; }
+.card:hover, .card:focus-within, .card.is-swept{ background:transparent; }
 
 /* =========================================================
    STATS BAND
@@ -1273,6 +1280,9 @@ a:hover > .media img,
 }
 .modal__head h3{ font-size:18px; margin-bottom:5px; }
 .modal__head p{ color:var(--text-3); font-size:13px; display:inline-flex; align-items:center; gap:7px; }
+/* padlock next to the dialog subtitle — without an explicit size the inline
+   SVG expands to fill the flex line */
+.lockic{ width:14px; height:14px; flex:none; opacity:.75; }
 .modal__x{
   width:36px; height:36px; border-radius:50%; border:1px solid var(--line); flex:none;
   display:grid; place-items:center; color:var(--text-2);
@@ -1576,7 +1586,7 @@ a:hover > .media img,
 @media (hover:none){
   .card:hover,.post:hover,.product:hover,.member:hover,
   .value:hover,.office:hover,.work__item:hover{ transform:none; box-shadow:none; }
-  .card__sweep{ display:none; }   /* no hover on touch — it would fire on tap */
+  /* the sweep stays on touch — JS drives it via .is-swept on scroll */
   .step:hover .step__body{ transform:none; }
   .frow:hover{ transform:none; }
   .milestone:hover{ padding-left:0; }

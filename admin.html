@@ -7,6 +7,17 @@
 <title>Admins — Sakib Apparels Limited</title>
 <meta name="description" content="Sakib Apparels lot administration: edit order sheets, upload photos and create new production lots." />
 <script>
+/* Gate: the admin area is only reachable after the PIN has been accepted
+   on the public site, which sets this session flag. Runs before paint so
+   no admin content is ever shown to an unauthenticated visitor.
+   Prototype only — real access control belongs on the server. */
+(function(){try{
+  if(sessionStorage.getItem('sakib-admin-auth')!=='1'){
+    location.replace('index.html?admin=1');
+  }
+}catch(e){}})();
+</script>
+<script>
 /* Runs before first paint so the saved theme applies with no flash. */
 (function(){var d=document.documentElement;
 try{var t=localStorage.getItem('sakib-theme');
@@ -53,6 +64,7 @@ d.setAttribute('data-theme',t);}catch(e){}})();
       <a href="about.html" class="nav__link"><span>About Us</span><span>About Us</span></a>
       <a href="services.html" class="nav__link"><span>Services</span><span>Services</span></a>
       <a href="contact.html" class="nav__link"><span>Contact Us</span><span>Contact Us</span></a>
+      <a href="admin.html" class="nav__link is-current"><span>Admins</span><span>Admins</span></a>
     </nav>
 
     <div class="header__actions">
@@ -240,43 +252,6 @@ d.setAttribute('data-theme',t);}catch(e){}})();
 </section>
 
 </main>
-
-<!-- Admin PIN gate -->
-<div class="modal modal--sm" id="pinModal" hidden>
-  <div class="modal__scrim" data-modal-close></div>
-  <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="pinTitle" tabindex="-1">
-    <header class="modal__head">
-      <div>
-        <h3 id="pinTitle">Admin PIN</h3>
-        <p>
-          <svg class="lockic" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M7 10V7a5 5 0 0 1 10 0v3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
-            <rect x="4.5" y="10" width="15" height="10.5" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.9"/>
-          </svg>
-          Enter your 4-digit PIN to edit lots.
-        </p>
-      </div>
-      <button class="modal__x" id="pinClose" type="button" aria-label="Close">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      </button>
-    </header>
-
-    <form class="pin" id="pinForm" novalidate>
-      <div class="pin__boxes" id="pinBoxes">
-        <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="off" aria-label="PIN digit 1" />
-        <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="off" aria-label="PIN digit 2" />
-        <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="off" aria-label="PIN digit 3" />
-        <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="off" aria-label="PIN digit 4" />
-      </div>
-      <p class="pin__msg" id="pinMsg" role="status"></p>
-      <button class="btn btn--solid" type="submit">
-        <span class="btn__label">Unlock</span>
-        <span class="btn__shine"></span>
-      </button>
-      <p class="pin__hint">Prototype build — the PIN is 1234.</p>
-    </form>
-  </div>
-</div>
 
 <!-- Customize: the order sheet as an editable pop-up -->
 <div class="modal" id="customModal" hidden>
